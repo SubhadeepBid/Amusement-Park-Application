@@ -68,5 +68,6 @@
 	</build>
 	<modules>
 		<module>Entity</module>
+		<module>Repository</module>
 	</modules>
 </project>
