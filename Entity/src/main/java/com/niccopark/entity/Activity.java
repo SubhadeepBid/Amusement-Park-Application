@@ -12,10 +12,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer extends User {
+public class Activity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer customerId;
+	private Integer activityId;
+	
+	private String description;
+	
+	private Float charges;
+	
+//	@OneToMany(cascade = CascadeType.ALL)
+//	private List<Ticket> tickets;
+	
+//	private String name;
+	
+//	private Duration ;
 
 }
