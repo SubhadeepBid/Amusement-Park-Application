@@ -6,6 +6,9 @@ public class CustomerException extends RuntimeException  {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	
 
 	public CustomerException(String message) {
 		super(message);
