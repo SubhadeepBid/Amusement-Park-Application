@@ -70,5 +70,6 @@
 		<module>Entity</module>
 		<module>Repository</module>
 		<module>Service</module>
+		<module>Controller</module>
 	</modules>
 </project>
