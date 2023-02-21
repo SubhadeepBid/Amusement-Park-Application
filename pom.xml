@@ -71,5 +71,6 @@
 		<module>Repository</module>
 		<module>Service</module>
 		<module>Controller</module>
+		<module>Exception</module>
 	</modules>
 </project>
