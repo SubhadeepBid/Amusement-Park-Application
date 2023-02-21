@@ -66,4 +66,7 @@
 			</plugin>
 		</plugins>
 	</build>
+	<modules>
+		<module>Entity</module>
+	</modules>
 </project>
