@@ -3,12 +3,14 @@ package com.niccopark.admin.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Admin;
 import com.niccopark.exceptions.AdminException;
 import com.niccopark.repository.AdminRepository;
 
+@Service
 public class AdminServiceImpl implements AdminService {
 	
 	@Autowired
@@ -28,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Override
-	public Admin validateCustomer(ValidateUserDTO dto) throws AdminException {
+	public Admin validateAdmin(ValidateUserDTO dto) throws AdminException {
 		
 		Optional<Admin> opt = adminRepository.findByUsernameAndPassword(dto.getUsername(), dto.getPassword());
 		
@@ -38,12 +40,6 @@ public class AdminServiceImpl implements AdminService {
 		
 		return opt.get();
 		
-	}
-
-	@Override
-	public Admin updateAdminUsername(ValidateUserDTO dto, String username) throws AdminException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
