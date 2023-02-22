@@ -22,8 +22,8 @@ public class Customer extends User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer customerId;
 	
-//	@OneToMany
-//	private List<Ticket> tickets = new ArrayList<>();
+	@OneToMany
+	private List<Ticket> tickets = new ArrayList<>();
 
 }
 
