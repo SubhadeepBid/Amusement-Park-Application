@@ -9,15 +9,21 @@ import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Admin;
+import com.niccopark.entity.Slot;
 import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.CustomerException;
+import com.niccopark.exceptions.SlotException;
 import com.niccopark.repository.AdminRepository;
+import com.niccopark.repository.SlotRepository;
 
 @Service
 public class AdminServiceImpl implements AdminService {
 	
 	@Autowired
 	private AdminRepository adminRepository;
+	
+	@Autowired
+	private SlotRepository slotRepository;
 
 	@Override
 	public Admin insertAdmin(Admin admin) throws AdminException {
@@ -112,6 +118,19 @@ public class AdminServiceImpl implements AdminService {
 		adminRepository.delete(savedAdmin);
 		
 		return savedAdmin;
+		
+	}
+
+	@Override
+	public Slot insertSlot(Slot slot) throws SlotException {
+		
+		Optional<Slot> opt = slotRepository.FindByStartTimeAndEndTime(slot.getStartTime(), slot.getEndTime());
+		
+		if(opt.isPresent()) {
+			throw new SlotException("Slot already saved");
+		}
+		
+		return slotRepository.save(slot);
 		
 	}
 

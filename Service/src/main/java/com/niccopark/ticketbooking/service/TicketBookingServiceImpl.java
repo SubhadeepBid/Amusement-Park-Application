@@ -2,6 +2,7 @@ package com.niccopark.ticketbooking.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,108 +11,131 @@ import com.niccopark.dtos.ActvityDTO;
 import com.niccopark.dtos.BookingDetails;
 import com.niccopark.dtos.TicketDTO;
 import com.niccopark.entity.Activity;
-import com.niccopark.entity.BookedActivity;
 import com.niccopark.entity.Customer;
+import com.niccopark.entity.Slot;
 import com.niccopark.entity.Ticket;
 import com.niccopark.exceptions.ActivityException;
+import com.niccopark.exceptions.CustomerException;
 import com.niccopark.exceptions.TicketException;
 import com.niccopark.repository.ActivityRepository;
 import com.niccopark.repository.BookedActivityRepository;
 import com.niccopark.repository.CustomerRepository;
+import com.niccopark.repository.SlotRepository;
 import com.niccopark.repository.TicketRepository;
 
 @Service
 public class TicketBookingServiceImpl implements TicketBookingService {
 
 	@Autowired
-	private ActivityRepository arepo;
+	private ActivityRepository activityRepository;
 
 	@Autowired
-	private CustomerRepository crepo;
+	private CustomerRepository customerRepository;
 
 	@Autowired
-	private BookedActivityRepository brepo;
+	private BookedActivityRepository bookedActivityRepository;
 
 	@Autowired
-	private TicketRepository trepo;
+	private TicketRepository ticketRepository;
+
+	@Autowired
+	private SlotRepository slotRepository;
 
 	@Override
-	public TicketDTO insertTicket(BookingDetails bookingDetailsDTO) throws TicketException, ActivityException {
+	public TicketDTO insertTicket(BookingDetails dto) throws TicketException, ActivityException, CustomerException {
 
-		Activity existingActivity = arepo.findByName(bookingDetailsDTO.getActivityName());
+		Optional<Customer> optional = customerRepository.findById(dto.getCustomerId());
 
-		if (existingActivity != null) {
+		if (optional.isPresent()) {
 
-			Optional<Customer> existingCustomer = crepo.findById(bookingDetailsDTO.getCustomerId());
+			Customer existingCustomer = optional.get();
 
-			if (existingCustomer.isPresent()) {
+			Optional<Activity> option = activityRepository.findById(dto.getActivityId());
 
-				Customer customer = existingCustomer.get();
+			if (option.isPresent()) {
 
-//				BookedActivity bookedActivity = new BookedActivity();
+				Activity existingActivity = option.get();
 
-//				bookedActivity.setActivity(existingActivity);
+				Optional<Slot> slot = slotRepository.findById(dto.getSlotId());
 
-//				bookedActivity.setCustomer(customer);
+				if (slot.isPresent()) {
 
-//				BookedActivity customerActivity = brepo.save(bookedActivity);
+					Set<Slot> slots = existingActivity.getSlots();
 
-				Ticket ticket = new Ticket();
+					Slot existingSlot = slot.get();
 
-				ticket.setCustomer(customer);
-				
-				ticket.setActivity(existingActivity);
-				
-//				ticket.getBookedActivities().add(customerActivity);
+					if (slots.contains(existingSlot)) {
 
-				trepo.save(ticket);
+						Ticket ticket = new Ticket();
 
-				TicketDTO ticketDTO = new TicketDTO();
+						ticket.setActivity(existingActivity);
 
-				ticketDTO.setActivityCharge(existingActivity.getCharges());
+						ticket.setCustomer(existingCustomer);
 
-				ticketDTO.setActivityName(existingActivity.getName());
+						ticket.setSlot(existingSlot);
 
-				ticketDTO.setMobileNumber(customer.getMobileNumber());
+						existingActivity.getTickets().add(ticket);
 
-				return ticketDTO;
+						ticketRepository.save(ticket);
 
+						TicketDTO ticketDTO = new TicketDTO();
+
+						ticketDTO.setActivityCharge(existingActivity.getCharges());
+
+						ticketDTO.setActivityName(existingActivity.getName());
+
+						ticketDTO.setCustomerName(existingCustomer.getName());
+
+						ticketDTO.setSlot(existingSlot);
+
+						return ticketDTO;
+
+					} else {
+
+						throw new ActivityException("Slot does not exists for this activity");
+
+					}
+
+				} else {
+
+					throw new ActivityException("Slot does not exists..");
+
+				}
 			} else {
-				throw new TicketException("Customer does not exists...");
+				throw new ActivityException("Activity not found..");
 			}
 
 		} else {
-
-			throw new ActivityException("Activity does not exists..");
+			throw new CustomerException("Customer does not exists..");
 		}
 
 	}
 
 	@Override
 	public void updateTicket(ActvityDTO actvityDTO) throws ActivityException {
-		
-		Optional<Activity> existingActivity = arepo.findById(actvityDTO.getActivityId());
-		
-		if(existingActivity.isPresent()) {
-			
-			Activity activity = arepo.findByName(actvityDTO.getActivityName());
-			
-			if(activity != null) {
-				
-				
-				
-			}
-			else {
-				
-				
-				
-			}
-			
-		}
-		else {
-			throw new TicketException("Ticket can't update because activity id is wrong");
-		}
-		
+
+//		Optional<Activity> existingActivity = arepo.findById(actvityDTO.getActivityId());
+//		
+//		if(existingActivity.isPresent()) {
+//			
+//			Activity activity = arepo.findByName(actvityDTO.getActivityName());
+//			
+//			if(activity != null) {
+//				
+//				
+//				
+//			}
+//			else {
+//				
+//				
+//				
+//			}
+//			
+//		}
+//		else {
+//			throw new TicketException("Ticket can't update because activity id is wrong");
+//		}
+
 	}
 
 	@Override
@@ -127,9 +151,37 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	}
 
 	@Override
-	public Double calculateBill(Integer customerId) throws TicketException {
-		// TODO Auto-generated method stub
-		return null;
+	public Double calculateBill(Integer customerId) throws CustomerException, TicketException {
+
+		Optional<Customer> customer = customerRepository.findById(customerId);
+
+		if (customer.isPresent()) {
+
+			Customer existingCustomer = customer.get();
+
+			List<Ticket> tickets = existingCustomer.getTickets();
+
+			if (tickets.isEmpty()) {
+
+				throw new TicketException("No tickets found");
+
+			} else {
+
+				Double bill = 0.0;
+
+				for (Ticket t : tickets) {
+
+					bill += t.getActivity().getCharges();
+
+				}
+
+				return bill;
+
+			}
+		} else {
+			throw new CustomerException("Customer not found...");
+		}
+
 	}
 
 }

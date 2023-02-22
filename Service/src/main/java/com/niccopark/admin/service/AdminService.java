@@ -4,7 +4,9 @@ import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Admin;
+import com.niccopark.entity.Slot;
 import com.niccopark.exceptions.AdminException;
+import com.niccopark.exceptions.SlotException;
 
 public interface AdminService {
 
@@ -19,6 +21,8 @@ public interface AdminService {
 	public Admin updateAdminUsername(UpdateUserUsernameDTO dto) throws AdminException;
 
 	public Admin deleteAdmin(Integer adminId) throws AdminException;
+	
+	public Slot insertSlot(Slot slot) throws SlotException;
 
 //	public List<Activity> getAllActivities(Integer customerId) throws ActivityException;
 //
