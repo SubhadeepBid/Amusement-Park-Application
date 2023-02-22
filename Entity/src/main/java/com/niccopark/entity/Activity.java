@@ -1,13 +1,13 @@
 package com.niccopark.entity;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,17 +22,52 @@ public class Activity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer activityId;
 	
+	private String name;
+	
 	private String description;
 	
 	private Float charges;
 	
-	private List<LocalDateTime> activityStartTime = new ArrayList<>();
+	@ManyToMany
+	private Set<Slot> slots = new HashSet<>();
 	
+}
+
+// NEW FUNCTIONS
+
+// addSlotToActivity(); // Activity Service
+
+// getAllSlotsForAnActivity();  // Activity Service
+
+
+
+
+
+
+
+
+	
+//	private List<LocalDateTime> activityStartTime = new ArrayList<>();
+//	
 //	@OneToMany(cascade = CascadeType.ALL)
 //	private List<Ticket> tickets;
-	
-//	private String name;
-	
+//	
+//	
+//	
 //	private Duration ;
 
-}
+/* 
+OneToMany 
+
+Slot
+=====
+
+slotId
+startTime
+endTime
+
+
+@OneToMany
+private List<Slot> slot;
+
+*/

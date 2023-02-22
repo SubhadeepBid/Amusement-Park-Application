@@ -1,13 +1,14 @@
 package com.niccopark.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,19 +17,27 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer extends User {
+public class Slot {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer customerId;
+	private Integer slotId;
 	
-//	@OneToMany
-//	private List<Ticket> tickets = new ArrayList<>();
+	private LocalTime startTime;
+	
+	private LocalTime endTime;
+	
+	@ManyToMany
+	private Set<Activity> activities = new HashSet<>();
 
 }
 
-// getTicketsByCustomerId();
+
+// NEW FUNCTIONS
+
+// addSlot()  // Admin Service
+
+// getAllActivitiesFromSlot(); // Admin
 
 
-// To make Ticket to Customer bidirectional
-// we need to make a DTO []
+
