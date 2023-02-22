@@ -1,24 +1,23 @@
 package com.niccopark.admin.service;
 
-import java.util.List;
-
-import com.niccopark.entity.Activity;
+import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Admin;
-import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.AdminException;
 
 public interface AdminService {
 
 	public Admin insertAdmin(Admin admin) throws AdminException;
+	
+	public Admin validateCustomer(ValidateUserDTO dto) throws AdminException;
 
-	public Admin updateAdmin(Admin admin) throws AdminException;
+	public Admin updateAdminUsername(ValidateUserDTO dto, String username) throws AdminException;
 
-	public Admin deleteAdmin(Integer adminId) throws AdminException;
-
-	public List<Activity> getAllActivities(Integer customerId) throws ActivityException;
-
-	public List<Activity> getAllActivities() throws ActivityException;
-
+//	public Admin deleteAdmin(Integer adminId) throws AdminException;
+//
+//	public List<Activity> getAllActivities(Integer customerId) throws ActivityException;
+//
+//	public List<Activity> getAllActivities() throws ActivityException;
+//
 //	public List<Activity> getActivitiesCustomerWise() throws ActivityException;
 //
 //	public List<Activity> getActivitiesDateWise() throws ActivityException;
