@@ -14,6 +14,7 @@ import com.niccopark.dtos.TicketDTO;
 import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.CustomerException;
 import com.niccopark.exceptions.TicketException;
+import com.niccopark.ticketbooking.service.TicketBookingService;
 import com.niccopark.ticketbooking.service.TicketBookingServiceImpl;
 
 @RestController
@@ -21,12 +22,12 @@ import com.niccopark.ticketbooking.service.TicketBookingServiceImpl;
 public class TicketBookingController {
 	
 	@Autowired
-	private TicketBookingServiceImpl ticketBookingServiceImpl;
+	private TicketBookingService ticketBookingService;
 	
 	@PostMapping("/booking")
 	public ResponseEntity<TicketDTO> insertTicketHandler(@PathVariable BookingDetails dto)throws TicketException, ActivityException, CustomerException{
 		
-		return new ResponseEntity<TicketDTO>(ticketBookingServiceImpl.insertTicket(dto), HttpStatus.ACCEPTED);
+		return new ResponseEntity<TicketDTO>(ticketBookingService.insertTicket(dto), HttpStatus.ACCEPTED);
 		
 	}
 	
@@ -34,7 +35,7 @@ public class TicketBookingController {
 	@GetMapping("/bill/{cid}")
 	public ResponseEntity<Double> calculateBillHandler(@PathVariable("cid") Integer customerID)throws CustomerException, TicketException{
 		
-		return new ResponseEntity<Double>(ticketBookingServiceImpl.calculateBill(customerID), HttpStatus.OK);
+		return new ResponseEntity<Double>(ticketBookingService.calculateBill(customerID), HttpStatus.OK);
 		
 	}
 	
