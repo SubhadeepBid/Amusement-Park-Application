@@ -14,7 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
+@Entity 
 @NoArgsConstructor
 @AllArgsConstructor
 public class Slot {
