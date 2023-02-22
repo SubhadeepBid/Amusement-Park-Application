@@ -28,7 +28,7 @@ public class BookedActivity {
 	@ManyToOne
 	private Customer customer;
 	
-	private LocalDateTime activityStartTime = LocalDateTime.now();
+//	private LocalDateTime activityStartTime = LocalDateTime.now();
 
 }
 
