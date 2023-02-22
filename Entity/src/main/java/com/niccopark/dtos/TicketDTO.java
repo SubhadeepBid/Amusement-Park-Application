@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValidateUserUpdateUsername {
+public class TicketDTO {
 	
-	private String newUsername;
-
-	private String oldUsername;
-
-	private String password;
+	private String customerName;
 	
+	private String activityName;
+	
+	private Float activityCharge;
+	
+	private String mobileNumber;
 	
 }
