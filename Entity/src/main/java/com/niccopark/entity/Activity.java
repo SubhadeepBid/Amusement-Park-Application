@@ -51,15 +51,15 @@ public class Activity {
 //	
 //	@OneToMany(cascade = CascadeType.ALL)
 //	private List<Ticket> tickets;
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //	
 //	
 //	
-=======
-	
-	private String name;
-	
->>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
+//=======
+//	
+//	private String name;
+//	
+//>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 //	private Duration ;
 
 /* 
