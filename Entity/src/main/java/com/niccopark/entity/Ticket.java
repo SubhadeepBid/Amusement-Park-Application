@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,12 +29,27 @@ public class Ticket {
 	@ManyToOne
 	private Customer customer;
 	
-//	@ManyToOne
-//	private Activity activity;
+//	@OneToMany
+//	private List<BookedActivity> bookedActivities = new ArrayList<>();
 	
-	@OneToMany
-	private List<BookedActivity> bookedActivities = new ArrayList<>(); 
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Activity activity;
+	
+	@OneToOne
+	private Slot slot;
 	
 	private LocalDateTime bookingTime = LocalDateTime.now();
 
 }
+
+// select Activity from Ticket where customer =:c
+// findActivityByCustomer();
+
+
+
+
+
+
+
+//@ManyToOne
+//private Activity activity;

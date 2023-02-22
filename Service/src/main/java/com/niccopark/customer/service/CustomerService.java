@@ -2,9 +2,9 @@ package com.niccopark.customer.service;
 
 import java.util.List;
 
+import com.niccopark.dtos.UpdateUserPasswordDTO;
+import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.ValidateUserDTO;
-import com.niccopark.dtos.ValidateUserPassword;
-import com.niccopark.dtos.ValidateUserUpdateUsername;
 import com.niccopark.entity.Customer;
 import com.niccopark.exceptions.CustomerException;
 
@@ -13,9 +13,9 @@ public interface CustomerService {
 
 	public Customer updateCustomerDetails(Customer customer) throws CustomerException;
 
-	public Customer updateCustomerPassword(ValidateUserPassword vpudto) throws CustomerException;
+	public Customer updateCustomerPassword(UpdateUserPasswordDTO dto) throws CustomerException;
 
-	public Customer updateCustomerUsername(ValidateUserUpdateUsername vusernameDto) throws CustomerException;
+	public Customer updateCustomerUsername(UpdateUserUsernameDTO dto) throws CustomerException;
 
 	public Customer deleteCustomer(Integer customerId) throws CustomerException;
 
