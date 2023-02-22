@@ -69,8 +69,6 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 
 				ticketDTO.setActivityName(existingActivity.getName());
 
-				ticketDTO.setCustomerName(customer.getUsername());
-
 				ticketDTO.setMobileNumber(customer.getMobileNumber());
 
 				return ticketDTO;
