@@ -36,7 +36,7 @@ public class Activity {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Ticket> tickets = new ArrayList<>();
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<Slot> slots = new HashSet<>();
 	
 }

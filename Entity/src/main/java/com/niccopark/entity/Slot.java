@@ -27,7 +27,7 @@ public class Slot {
 	
 	private LocalTime endTime;
 	
-	@ManyToMany
+	@ManyToMany(mappedBy = "slots")
 	private Set<Activity> activities = new HashSet<>();
 
 }
