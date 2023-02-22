@@ -7,10 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDetails {
+public class TicketDTO {
 	
-	private Integer customerId;
+	private String customerName;
 	
 	private String activityName;
+	
+	private Float activityCharge;
+	
+	private String mobileNumber;
 	
 }

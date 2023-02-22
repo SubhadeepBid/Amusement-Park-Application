@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDetails {
+public class ActvityDTO {
 	
-	private Integer customerId;
-	
+	private Integer activityId;
 	private String activityName;
 	
 }
