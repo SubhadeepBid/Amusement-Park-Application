@@ -55,7 +55,9 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 			if (option.isPresent()) {
 
 				Activity existingActivity = option.get();
-
+				
+				System.out.println(existingActivity);
+				
 				Optional<Slot> slot = slotRepository.findById(dto.getSlotId());
 
 				if (slot.isPresent()) {
@@ -75,8 +77,11 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 						ticket.setSlot(existingSlot);
 
 						existingActivity.getTickets().add(ticket);
-
+						
+						existingCustomer.getTickets().add(ticket);
+						
 						ticketRepository.save(ticket);
+						
 
 						TicketDTO ticketDTO = new TicketDTO();
 
