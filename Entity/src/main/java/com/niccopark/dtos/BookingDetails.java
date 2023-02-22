@@ -1,5 +1,6 @@
 package com.niccopark.dtos;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,9 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDetails {
-	
+
 	private Integer customerId;
-	
-	private String activityName;
-	
+
+	private Integer activityId;
+
+	private Integer slotId;
+
 }
