@@ -29,14 +29,14 @@ public class Activity {
 	
 	private String name;
 	
-	private String description;
+	private String description; 
 	
 	private Float charges;
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Ticket> tickets = new ArrayList<>();
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<Slot> slots = new HashSet<>();
 	
 }

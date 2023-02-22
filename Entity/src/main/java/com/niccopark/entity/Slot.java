@@ -14,7 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
+@Entity 
 @NoArgsConstructor
 @AllArgsConstructor
 public class Slot {
@@ -27,7 +27,7 @@ public class Slot {
 	
 	private LocalTime endTime;
 	
-	@ManyToMany
+	@ManyToMany(mappedBy = "slots")
 	private Set<Activity> activities = new HashSet<>();
 
 }
