@@ -8,9 +8,13 @@ public interface AdminService {
 
 	public Admin insertAdmin(Admin admin) throws AdminException;
 	
-	public Admin validateCustomer(ValidateUserDTO dto) throws AdminException;
+	public Admin validateAdmin(ValidateUserDTO dto) throws AdminException;
 
-	public Admin updateAdminUsername(ValidateUserDTO dto, String username) throws AdminException;
+//	public Admin updateAdminDetails(Admin admin) throws AdminException;
+	
+//	public Admin updateAdminPassword(UpdateUserPasswordDTO dto) throws AdminException;
+	
+//	public Admin updateAdminUsername(UpdateUserUsername dto) throws AdminException;
 
 //	public Admin deleteAdmin(Integer adminId) throws AdminException;
 //
