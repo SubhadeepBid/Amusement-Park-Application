@@ -1,6 +1,5 @@
 package com.niccopark.dtos;
 
-import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,10 +12,8 @@ public class BookingDetails {
 
 	private Integer customerId;
 
-	private String activityName;
+	private Integer activityId;
 
-	private LocalTime startTime;
-
-	private LocalTime endTime;
+	private Integer slotId;
 
 }

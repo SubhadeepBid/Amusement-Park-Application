@@ -1,5 +1,7 @@
 package com.niccopark.dtos;
 
+import com.niccopark.entity.Slot;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,6 @@ public class TicketDTO {
 	
 	private Float activityCharge;
 	
-	private String mobileNumber;
+	private Slot slot;
 	
 }
