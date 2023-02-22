@@ -31,7 +31,7 @@ public class Activity {
 //	@OneToMany(cascade = CascadeType.ALL)
 //	private List<Ticket> tickets;
 	
-//	private String name;
+	private String name;
 	
 //	private Duration ;
 
