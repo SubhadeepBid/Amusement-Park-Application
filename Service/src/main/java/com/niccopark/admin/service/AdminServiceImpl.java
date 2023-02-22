@@ -124,12 +124,12 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public Slot insertSlot(Slot slot) throws SlotException {
 		
-		Optional<Slot> opt = slotRepository.FindByStartTimeAndEndTime(slot.getStartTime(), slot.getEndTime());
-		
-		if(opt.isPresent()) {
-			throw new SlotException("Slot already saved");
-		}
-		
+//		Optional<Slot> opt = slotRepository.FindByStartTimeAndEndTime(slot.getStartTime(), slot.getEndTime());
+//		
+//		if(opt.isPresent()) {
+//			throw new SlotException("Slot already saved");
+//		}
+//		
 		return slotRepository.save(slot);
 		
 	}

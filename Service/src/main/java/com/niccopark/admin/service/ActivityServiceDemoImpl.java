@@ -3,6 +3,7 @@ package com.niccopark.admin.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.niccopark.entity.Activity;
 import com.niccopark.entity.Slot;
@@ -11,6 +12,7 @@ import com.niccopark.exceptions.SlotException;
 import com.niccopark.repository.ActivityRepository;
 import com.niccopark.repository.SlotRepository;
 
+@Service
 public class ActivityServiceDemoImpl implements ActivityServiceDemo {
 	
 	@Autowired
@@ -46,6 +48,8 @@ public class ActivityServiceDemoImpl implements ActivityServiceDemo {
 		}
 		
 		activity.getSlots().add(opt1.get());
+		
+//		opt1.get().getActivities().add(activity);
 		
 		return activityRepository.save(activity);
 	}

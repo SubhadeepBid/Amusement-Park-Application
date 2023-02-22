@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,8 +34,9 @@ public class Activity {
 	
 	private Float charges;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "activity", fetch = FetchType.EAGER)
 	private List<Ticket> tickets = new ArrayList<>();
+	
 	
 	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<Slot> slots = new HashSet<>();

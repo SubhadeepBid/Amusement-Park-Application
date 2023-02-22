@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ public class TicketBookingController {
 	private TicketBookingService ticketBookingService;
 	
 	@PostMapping("/booking")
-	public ResponseEntity<TicketDTO> insertTicketHandler(@PathVariable BookingDetails dto)throws TicketException, ActivityException, CustomerException{
+	public ResponseEntity<TicketDTO> insertTicketHandler(@RequestBody BookingDetails dto)throws TicketException, ActivityException, CustomerException{
 		
 		return new ResponseEntity<TicketDTO>(ticketBookingService.insertTicket(dto), HttpStatus.ACCEPTED);
 		
