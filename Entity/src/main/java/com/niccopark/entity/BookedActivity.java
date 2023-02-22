@@ -22,15 +22,15 @@ public class BookedActivity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer bookingActivityId;
 	
-	@OneToOne
+	@ManyToOne
 	private Activity activity;
 	
 	@ManyToOne
 	private Customer customer;
 	
-	private LocalDateTime activityStartTime = LocalDateTime.now();
-
 }
+
+//private LocalDateTime activityStartTime = LocalDateTime.now();
 
 //activityStartTime1 = {Activities1, Act2, Act1}
 //activityStartTime2 = {Activities1, Act2, Act1}

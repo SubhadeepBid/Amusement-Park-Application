@@ -7,13 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValidateUserUpdateUsername {
+public class BookingDetails {
 	
-	private String newUsername;
-
-	private String oldUsername;
-
-	private String password;
+	private Integer customerId;
 	
+	private String activityName;
 	
 }
