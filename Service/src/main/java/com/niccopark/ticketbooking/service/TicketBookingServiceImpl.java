@@ -48,18 +48,21 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 
 				Customer customer = existingCustomer.get();
 
-				BookedActivity bookedActivity = new BookedActivity();
+//				BookedActivity bookedActivity = new BookedActivity();
 
-				bookedActivity.setActivity(existingActivity);
+//				bookedActivity.setActivity(existingActivity);
 
-				bookedActivity.setCustomer(customer);
+//				bookedActivity.setCustomer(customer);
 
-				BookedActivity customerActivity = brepo.save(bookedActivity);
+//				BookedActivity customerActivity = brepo.save(bookedActivity);
 
 				Ticket ticket = new Ticket();
 
 				ticket.setCustomer(customer);
-				ticket.getBookedActivities().add(customerActivity);
+				
+				ticket.setActivity(existingActivity);
+				
+//				ticket.getBookedActivities().add(customerActivity);
 
 				trepo.save(ticket);
 

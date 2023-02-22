@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,12 +28,27 @@ public class Ticket {
 	@ManyToOne
 	private Customer customer;
 	
-//	@ManyToOne
-//	private Activity activity;
+//	@OneToMany
+//	private List<BookedActivity> bookedActivities = new ArrayList<>();
 	
-	@OneToMany
-	private List<BookedActivity> bookedActivities = new ArrayList<>(); 
+	@ManyToOne
+	private Activity activity;
+	
+	@OneToOne
+	private Slot slot;
 	
 	private LocalDateTime bookingTime = LocalDateTime.now();
 
 }
+
+// select Activity from Ticket where customer =:c
+// findActivityByCustomer();
+
+
+
+
+
+
+
+//@ManyToOne
+//private Activity activity;

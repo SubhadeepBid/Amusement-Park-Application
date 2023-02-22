@@ -19,7 +19,7 @@ public interface AdminService {
 	public Admin updateAdminUsername(UpdateUserUsernameDTO dto) throws AdminException;
 
 	public Admin deleteAdmin(Integer adminId) throws AdminException;
-//
+
 //	public List<Activity> getAllActivities(Integer customerId) throws ActivityException;
 //
 //	public List<Activity> getAllActivities() throws ActivityException;
