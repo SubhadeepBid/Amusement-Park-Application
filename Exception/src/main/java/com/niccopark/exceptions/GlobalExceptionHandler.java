@@ -1,55 +1,79 @@
 package com.niccopark.exceptions;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 
-public class GlobalExceptionHandler extends RuntimeException{
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
 	@ExceptionHandler(ActivityException.class)
-	public ResponseEntity<String> myIllegalHandler(ActivityException ie)  {
-		System.out.println("inside myHandler method...");
-		
-	 return new ResponseEntity<String>(ie.getMessage(),HttpStatus.BAD_REQUEST);
-		
+	public ResponseEntity<MyErrorDetails> activityExceptionHandler(ActivityException ae, WebRequest req) {
+
+		MyErrorDetails err = new MyErrorDetails();
+
+		err.setTimestamp(LocalDateTime.now());
+		err.setMessage(ae.getMessage());
+		err.setDetails(req.getDescription(false));
+
+		return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
 
 	}
-	
+
 	@ExceptionHandler(AdminException.class)
-	public ResponseEntity<String> myIllegalHandler(AdminException ie)  {
-		System.out.println("inside myHandler method...");
-		
-	 return new ResponseEntity<String>(ie.getMessage(),HttpStatus.BAD_REQUEST);
-		
+	public ResponseEntity<MyErrorDetails> adminExceptionHandler(AdminException ae, WebRequest req) {
+
+		MyErrorDetails err = new MyErrorDetails();
+
+		err.setTimestamp(LocalDateTime.now());
+		err.setMessage(ae.getMessage());
+		err.setDetails(req.getDescription(false));
+
+		return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
 
 	}
-	
+
 	@ExceptionHandler(CustomerException.class)
-	public ResponseEntity<String> CustomerException(CustomerException ie)  {
-		System.out.println("inside myHandler method...");
-		
-	 return new ResponseEntity<String>(ie.getMessage(),HttpStatus.BAD_REQUEST);
-		
+	public ResponseEntity<MyErrorDetails> customerExceptionHandler(CustomerException ce, WebRequest req) {
+
+		MyErrorDetails err = new MyErrorDetails();
+
+		err.setTimestamp(LocalDateTime.now());
+		err.setMessage(ce.getMessage());
+		err.setDetails(req.getDescription(false));
+
+		return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
 
 	}
+
 	@ExceptionHandler(TicketException.class)
-	public ResponseEntity<String> myIllegalHandler(TicketException ie)  {
-		System.out.println("inside myHandler method...");
-		
-	 return new ResponseEntity<String>(ie.getMessage(),HttpStatus.BAD_REQUEST);
-		
+	public ResponseEntity<MyErrorDetails> ticketExceptionHandler(TicketException te, WebRequest req) {
+
+		MyErrorDetails err = new MyErrorDetails();
+
+		err.setTimestamp(LocalDateTime.now());
+		err.setMessage(te.getMessage());
+		err.setDetails(req.getDescription(false));
+
+		return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
 
 	}
-	
 
-	//to handle any other type of Exception
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<String> myExceptionHandler(Exception e) {
-		System.out.println("inside myHandler method...");
-		
-		 return new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
-		
+	public ResponseEntity<MyErrorDetails> exceptionHandler(Exception e, WebRequest req) {
+
+		MyErrorDetails err = new MyErrorDetails();
+
+		err.setTimestamp(LocalDateTime.now());
+		err.setMessage(e.getMessage());
+		err.setDetails(req.getDescription(false));
+
+		return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
 
 	}
-
 
 }
