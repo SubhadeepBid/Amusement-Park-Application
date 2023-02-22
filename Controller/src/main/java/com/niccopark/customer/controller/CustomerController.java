@@ -24,5 +24,10 @@ public class CustomerController {
 		return new ResponseEntity<>(customerService.insertCustomer(customer), HttpStatus.CREATED);
 	}
 
-//	public ResponseEntity<Customer> updateCustomerDetails(@RequestBody  )
+//	public ResponseEntity<Customer> updateCustomerDetails(@RequestBody  
+	
+
+
+
+//)
 }
