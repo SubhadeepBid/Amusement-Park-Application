@@ -13,15 +13,13 @@ import com.niccopark.exceptions.SlotException;
 import com.niccopark.repository.ActivityRepository;
 import com.niccopark.repository.SlotRepository;
 
-
-
-
 @Service
 public class ActivityServiceImpl implements ActivityService {
 	@Autowired
 	private ActivityRepository activityrepo;
 	@Autowired
 	private SlotRepository slotRepository;
+
 	@Override
 
 	public Activity insertActivity(Activity activity) throws ActivityException {
@@ -32,7 +30,6 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 
 		return activityrepo.save(activity);
-
 
 	}
 
@@ -73,30 +70,30 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public Activity addSlotsToActivity(Integer activityId, Integer slotId) throws ActivityException, SlotException {
-		
-		Optional<Activity> opt =  activityrepo.findById(activityId);
-		
-		if(opt.isEmpty()) {
+
+		Optional<Activity> opt = activityrepo.findById(activityId);
+
+		if (opt.isEmpty()) {
 			throw new ActivityException("Activity Not Found");
 		}
-		
+
 		Activity activity = opt.get();
-		
-		Optional<Slot> opt1 =  slotRepository.findById(slotId);
-		
-		if(opt1.isEmpty()) {
+
+		Optional<Slot> opt1 = slotRepository.findById(slotId);
+
+		if (opt1.isEmpty()) {
 			throw new SlotException("Slot Not Found");
 		}
-		
-		if(activity.getSlots().contains(opt1.get())) {
+
+		if (activity.getSlots().contains(opt1.get())) {
 			throw new SlotException("Slot Already Added");
 		}
-		
+
 		activity.getSlots().add(opt1.get());
-		
+
 //		opt1.get().getActivities().add(activity);
-		
-		return  activityrepo.save(activity);
+
+		return activityrepo.save(activity);
 	}
 
 }

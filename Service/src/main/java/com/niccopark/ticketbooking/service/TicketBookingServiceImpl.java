@@ -124,54 +124,54 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	@Override
 	public void updateTicket(TicketUpdateDTO actvityDTO, Integer ticketId) throws ActivityException, SlotException {
 
-		Optional<Ticket> opt = ticketRepository.findById(ticketId);
-		
-		if(opt.isEmpty()) {
-			
-			throw new TicketException("Ticket not found..");
-			
-		}
-		
-		Ticket existingTicket = opt.get();
-		
-		Optional<Activity> opt1 = activityRepository.findByName(actvityDTO.getActivityName());
-		
-		if(opt1.isEmpty()) {
-			throw new ActivityException("Actvity not found..");
-		}
-		
-		Activity existingActivity = opt1.get();
-		
-		Optional<Slot> opt2 = slotRepository.findById(actvityDTO.getSlotId());
-		
-		if(opt2.isEmpty()) {
-			
-			throw new SlotException("Slot not found..");
-			
-		}
-		
-		Slot existingSlot = opt2.get();
-		
-		if(existingActivity.getSlots().contains(existingSlot)) {
-			
-			Activity previousActivity = existingTicket.getActivity();
-			
-			List<Ticket> tickets = previousActivity.getTickets();
-			
-			List<Ticket> updatedTicket = tickets.stream().filter(t -> t.getTicketId() == ticketId).collect(Collectors.toList());
-			
-			Object obj = ticketRepository.deleteTicket(existingTicket);
-			
-			System.out.println(obj.toString());
-			
-			
-			
-			
-//			existingTicket.setActivity(existingActivity);
-			
-//			exi
-			
-		}
+//		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+//		
+//		if(opt.isEmpty()) {
+//			
+//			throw new TicketException("Ticket not found..");
+//			
+//		}
+//		
+//		Ticket existingTicket = opt.get();
+//		
+//		Optional<Activity> opt1 = activityRepository.findByName(actvityDTO.getActivityName());
+//		
+//		if(opt1.isEmpty()) {
+//			throw new ActivityException("Actvity not found..");
+//		}
+//		
+//		Activity existingActivity = opt1.get();
+//		
+//		Optional<Slot> opt2 = slotRepository.findById(actvityDTO.getSlotId());
+//		
+//		if(opt2.isEmpty()) {
+//			
+//			throw new SlotException("Slot not found..");
+//			
+//		}
+//		
+//		Slot existingSlot = opt2.get();
+//		
+//		if(existingActivity.getSlots().contains(existingSlot)) {
+//			
+//			Activity previousActivity = existingTicket.getActivity();
+//			
+//			List<Ticket> tickets = previousActivity.getTickets();
+//			
+//			List<Ticket> updatedTicket = tickets.stream().filter(t -> t.getTicketId() == ticketId).collect(Collectors.toList());
+//			
+//			Object obj = ticketRepository.deleteTicket(existingTicket);
+//			
+//			System.out.println(obj.toString());
+//			
+//			
+//			
+//			
+////			existingTicket.setActivity(existingActivity);
+//			
+////			exi
+//			
+//		}
 		
 		
 //		Optional<Activity> existingActivity = arepo.findById(actvityDTO.getActivityId());
@@ -200,14 +200,35 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 
 	@Override
 	public Ticket deleteTicket(Integer ticketId) throws TicketException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Optional<Ticket> optional = ticketRepository.findById(ticketId);
+		
+		if(optional.isEmpty()) {
+			throw new TicketException("Ticket not found");
+		}
+		else {
+			ticketRepository.delete(optional.get());
+			return optional.get();
+		}
+		
 	}
 
 	@Override
-	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws TicketException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws TicketException, CustomerException {
+		
+		Optional<Customer> optional = customerRepository.findById(customerId);
+		
+		if(optional.isPresent()) {
+			
+			return optional.get().getTickets();
+			
+		}
+		else {
+			
+			throw new CustomerException("Customer not present");
+			
+		}
+		
 	}
 
 	@Override
