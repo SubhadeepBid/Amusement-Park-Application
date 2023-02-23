@@ -3,6 +3,7 @@ package com.niccopark.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,13 +23,12 @@ public class Customer extends User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer customerId;
 	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
 	private List<Ticket> tickets = new ArrayList<>();
 
+	@Override
+	public String toString() {
+		return "Customer [customerId=" + customerId + "]";
+	}
+
 }
-
-// getTicketsByCustomerId();
-
-
-// To make Ticket to Customer bidirectional
-// we need to make a DTO []
