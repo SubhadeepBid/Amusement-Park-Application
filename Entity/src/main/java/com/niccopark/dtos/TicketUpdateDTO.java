@@ -1,5 +1,7 @@
 package com.niccopark.dtos;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +9,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ActvityDTO {
+public class TicketUpdateDTO {
 	
-	private Integer activityId;
 	private String activityName;
+	
+	private Integer slotId;
+	
+	private LocalDate date;
 	
 }

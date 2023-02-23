@@ -47,7 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
 			savecustomer.setEmail(customer.getEmail());
 		}
 		
-		return customerRepository.save(customer);
+		return customerRepository.save(savecustomer);
 		
 	}
 

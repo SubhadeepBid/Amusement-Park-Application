@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.niccopark.entity.BookedActivity;
 
-public interface BookedActivityRepository extends JpaRepository<BookedActivity, Integer> {
+public interface BookedActivityRepository { //extends JpaRepository<BookedActivity, Integer> {
 
 }

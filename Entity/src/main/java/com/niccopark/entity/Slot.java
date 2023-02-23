@@ -1,11 +1,12 @@
 package com.niccopark.entity;
 
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,17 +31,13 @@ public class Slot {
 	private LocalTime endTime;
 	
 	@JsonIgnore
-	@ManyToMany
-	private Set<Activity> activities = new HashSet<>();
+	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "slots")
+	private List<Activity> activities = new ArrayList<>();
+//	private Set<Activity> activities = new HashSet<>(); // StackOverflow Error is coming
 
+	@Override
+	public String toString() {
+		return "Slot [slotId=" + slotId + ", startTime=" + startTime + ", endTime=" + endTime + "]";
+	}
+	
 }
-
-
-// NEW FUNCTIONS
-
-// addSlot()  // Admin Service
-
-// getAllActivitiesFromSlot(); // Admin
-
-
-
