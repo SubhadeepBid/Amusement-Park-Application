@@ -6,6 +6,7 @@ import javax.security.auth.login.LoginException;
 
 import com.niccopark.entity.Activity;
 import com.niccopark.exceptions.ActivityException;
+import com.niccopark.exceptions.SlotException;
 
 public interface ActivityService  {
 
@@ -19,4 +20,7 @@ public interface ActivityService  {
 	public List<Activity> viewActivityofCharges(float charges) throws ActivityException;
 
 	public int countActivityofCharges(float charges) throws ActivityException;
+	
+	public Activity addSlotsToActivity(Integer activityId, Integer slotId) throws ActivityException, SlotException;
+
 }
