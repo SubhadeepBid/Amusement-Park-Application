@@ -1,32 +1,20 @@
 package com.niccopark.entity;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@Entity
-@NoArgsConstructor
-@AllArgsConstructor
+//@Data
+//@Entity
+//@NoArgsConstructor
+//@AllArgsConstructor
 public class BookedActivity {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer bookingActivityId;
-	
-	@ManyToOne
-	private Activity activity;
-	
-	@ManyToOne
-	private Customer customer;
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.AUTO)
+//	private Integer bookingActivityId;
+//	
+//	@ManyToOne
+//	private Activity activity;
+//	
+//	@ManyToOne
+//	private Customer customer;
 	
 }
 
