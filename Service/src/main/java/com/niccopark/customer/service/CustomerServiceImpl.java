@@ -46,6 +46,9 @@ public class CustomerServiceImpl implements CustomerService {
 		if (customer.getEmail() != null) {
 			savecustomer.setEmail(customer.getEmail());
 		}
+		if (customer.getName() != null) {
+			savecustomer.setName(customer.getName());
+		}
 		
 		return customerRepository.save(savecustomer);
 		

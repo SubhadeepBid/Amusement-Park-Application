@@ -3,6 +3,8 @@ package com.niccopark.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +25,7 @@ public class Customer extends User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer customerId;
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
 	private List<Ticket> tickets = new ArrayList<>();
 

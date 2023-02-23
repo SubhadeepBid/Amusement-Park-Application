@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,14 +29,14 @@ public class Ticket {
 	private Integer ticketId;
 	
 	// Apply @JsonIgnore here to avoid StackOverflow error
-	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
+//	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "customerId")
 	private Customer customer;
 	
 	// Apply @JsonIgnore here to avoid StackOverflow error
-	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
+//	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER) // Added , fetch = FetchType.EAGER 
 	@JoinColumn(name = "activityId")
 	private Activity activity;
 	

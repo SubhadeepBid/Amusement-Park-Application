@@ -37,12 +37,13 @@ public class Activity {
 
 	// Apply @JsonIgnore here to avoid StackOverflow error
 	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER) // Removed cascade = CascadeType.ALL, 
 	@JoinTable(joinColumns = @JoinColumn(name = "activityId"), inverseJoinColumns = @JoinColumn(name = "slotId"))
 	private List<Slot> slots = new ArrayList<>();
 //	private Set<Slot> slots = new HashSet<>(); // StackOverflow Error is coming
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "activity")
+	@JsonIgnore
+	@OneToMany(mappedBy = "activity") // Removed cascade = CascadeType.ALL, 
 	private List<Ticket> tickets = new ArrayList<>();
 
 	@Override

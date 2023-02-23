@@ -7,78 +7,131 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.niccopark.entity.Activity;
+import com.niccopark.entity.Slot;
 import com.niccopark.exceptions.ActivityException;
+import com.niccopark.exceptions.SlotException;
 import com.niccopark.repository.ActivityRepository;
+import com.niccopark.repository.SlotRepository;
 
-<<<<<<< HEAD
-public class ActivityServiceImpl implements ActivityService  {
-@Autowired
-	private  ActivityRepository activityrepo;
-	@Override
-	
-	public Activity insertActivity(Activity activity) throws ActivityException {
-//		Activity act=activityrepo.findByName(activity.getName());
-//
-//		
-//		if (act==null) {
-//			throw new ActivityException ("activity already exsit");
-//		}
-//		
-//		return activityrepo.save(activity);
-		return null;
-=======
 @Service
 public class ActivityServiceImpl implements ActivityService {
+	
 	@Autowired
-	private ActivityRepository activityrepo;
+	private ActivityRepository activityRepository;
+
+	@Autowired
+	private SlotRepository slotRepository;
 
 	@Override
-
 	public Activity insertActivity(Activity activity) throws ActivityException {
-		Activity act = activityrepo.findByName(activity.getName());
-
-		if (act == null) {
-			throw new ActivityException("activity already exsit");
+		
+		Optional<Activity> opt = activityRepository.findByName(activity.getName());
+		
+		if(opt.isPresent()) {
+			throw new ActivityException("Activity With Name " + activity.getName() + " Is Already Present");
 		}
-
-		return activityrepo.save(activity);
-
->>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
+		
+		return activityRepository.save(activity);
+		
 	}
 
 	@Override
 	public Activity updateActivity(Activity activity) throws ActivityException {
-		Optional<Activity> activity2 = activityrepo.findById(activity.getActivityId());
-		if (activity2 == null)
-			throw new ActivityException("Activity with this id " + activity.getActivityId() + "available");
-		activityrepo.save(activity);
-		return activity;
+		
+		Optional<Activity> opt = activityRepository.findById(activity.getActivityId());
+		
+		if(opt.isEmpty()) {
+			throw new ActivityException("Activity Not Found");
+		}
+		
+		Activity existingActivity = opt.get();
+		
+		if(activity.getCharges() != null) {
+			existingActivity.setCharges(activity.getCharges());
+		}
+		if(activity.getDescription() != null) {
+			existingActivity.setDescription(activity.getDescription());
+		}
+		if(activity.getName() != null) {
+			existingActivity.setName(activity.getName());
+		}
+		
+		return activityRepository.save(existingActivity);
+		
 	}
 
 	@Override
-	public Activity deleteActivity(int activityid) throws ActivityException {
-		Optional<Activity> opt = activityrepo.findById(activityid);
+	public Activity deleteActivity(Integer activityId) throws ActivityException {
 
-		if (opt == null)
-			throw new ActivityException("Activity with this id " + activityid + "available");
-		activityrepo.delete(opt.get());
-		return opt.get();
+		Optional<Activity> opt = activityRepository.findById(activityId);
+		
+		if(opt.isEmpty()) {
+			throw new ActivityException("Activity Not Found");
+		}
+		
+		Activity existingActivity = opt.get();
+		
+		activityRepository.delete(existingActivity);
+		
+		return existingActivity;
+		
 	}
 
 	@Override
-	public List<Activity> viewActivityofCharges(float charges) throws ActivityException {
-		List<Activity> al = activityrepo.findByCharges(charges);
-		if (al.isEmpty())
-			throw new ActivityException("Data not found");
-		return al;
+	public List<Activity> viewActivitiesOfCharge(Float charges) throws ActivityException {
+		
+		List<Activity> activities = activityRepository.findByCharges(charges);
+		
+		if(activities.isEmpty()) {
+			throw new ActivityException("No Activities Found");
+		}
+		
+		return activities;
+		
 	}
 
 	@Override
-	public int countActivityofCharges(float charges) throws ActivityException {
-		List<Activity> al = activityrepo.findByCharges(charges);
-		if (al.isEmpty())
-			throw new ActivityException("Data not found");
-		return al.size();
+	public Integer countActivitiesOfCharges(Float charges) throws ActivityException {
+		
+		Integer count = activityRepository.getCountOfActivitiesOfCharges(charges);
+		
+		if(count == null || count == 0) {
+			throw new ActivityException("No Activities Found");
+		}
+		
+		return count;
+		
 	}
 
+	@Override
+	public Activity addSlotsToActivity(Integer activityId, Integer slotId) throws ActivityException, SlotException {
+		
+		Optional<Activity> opt = activityRepository.findById(activityId);
+		
+		if(opt.isEmpty()) {
+			throw new ActivityException("Activity Not Found");
+		}
+		
+		Activity activity = opt.get();
+		
+		Optional<Slot> opt1 = slotRepository.findById(slotId);
+		
+		if(opt1.isEmpty()) {
+			throw new SlotException("Slot Not Found");
+		}
+		
+		Slot slot = opt1.get();
+		
+		if(activity.getSlots().contains(slot)) {
+			throw new SlotException("Slot Already Added");
+		}
+		
+		activity.getSlots().add(slot);
+		
+		slot.getActivities().add(activity);
+		
+		return activityRepository.save(activity);
+		
+	}
+    
 }

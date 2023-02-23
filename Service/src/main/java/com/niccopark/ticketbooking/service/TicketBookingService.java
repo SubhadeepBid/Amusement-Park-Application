@@ -19,7 +19,7 @@ public interface TicketBookingService {
 	
 	public Ticket deleteTicket(Integer ticketId) throws TicketException;
 	
-	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws TicketException;
+	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws CustomerException, TicketException;
 	
 	public Double calculateBill(Integer customerId) throws CustomerException, TicketException;
 	

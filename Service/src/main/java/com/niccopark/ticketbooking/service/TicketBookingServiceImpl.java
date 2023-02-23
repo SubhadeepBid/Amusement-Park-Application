@@ -32,8 +32,6 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	@Autowired
 	private CustomerRepository customerRepository;
 	
-	
-	
 	@Autowired
 	private TicketRepository ticketRepository;
 
@@ -122,92 +120,45 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	}
 
 	@Override
-	public void updateTicket(TicketUpdateDTO actvityDTO, Integer ticketId) throws ActivityException, SlotException {
-
-		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+	public void updateTicket(TicketUpdateDTO activityDTO, Integer ticketId) throws ActivityException, SlotException {
+		// TODO Auto-generated method stub
 		
-		if(opt.isEmpty()) {
-			
-			throw new TicketException("Ticket not found..");
-			
-		}
-		
-		Ticket existingTicket = opt.get();
-		
-		Optional<Activity> opt1 = activityRepository.findByName(actvityDTO.getActivityName());
-		
-		if(opt1.isEmpty()) {
-			throw new ActivityException("Actvity not found..");
-		}
-		
-		Activity existingActivity = opt1.get();
-		
-		Optional<Slot> opt2 = slotRepository.findById(actvityDTO.getSlotId());
-		
-		if(opt2.isEmpty()) {
-			
-			throw new SlotException("Slot not found..");
-			
-		}
-		
-		Slot existingSlot = opt2.get();
-		
-		if(existingActivity.getSlots().contains(existingSlot)) {
-			
-			Activity previousActivity = existingTicket.getActivity();
-			
-			List<Ticket> tickets = previousActivity.getTickets();
-			
-			List<Ticket> updatedTicket = tickets.stream().filter(t -> t.getTicketId() == ticketId).collect(Collectors.toList());
-			
-			Object obj = ticketRepository.deleteTicket(existingTicket);
-			
-			System.out.println(obj.toString());
-			
-			
-			
-			
-//			existingTicket.setActivity(existingActivity);
-			
-//			exi
-			
-		}
-		
-		
-//		Optional<Activity> existingActivity = arepo.findById(actvityDTO.getActivityId());
-//		
-//		if(existingActivity.isPresent()) {
-//			
-//			Activity activity = arepo.findByName(actvityDTO.getActivityName());
-//			
-//			if(activity != null) {
-//				
-//				
-//				
-//			}
-//			else {
-//				
-//				
-//				
-//			}
-//			
-//		}
-//		else {
-//			throw new TicketException("Ticket can't update because activity id is wrong");
-//		}
-
 	}
 
 	@Override
 	public Ticket deleteTicket(Integer ticketId) throws TicketException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+		
+		if(opt.isEmpty()) {
+			throw new TicketException("No Ticket Found");
+		}
+		
+		Ticket existingTicket = opt.get();
+		
+		ticketRepository.delete(existingTicket);
+		
+		return existingTicket;
+		
 	}
 
 	@Override
-	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws TicketException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws CustomerException, TicketException {
+		
+		Optional<Customer> opt = customerRepository.findById(customerId);
+		
+		if(opt.isEmpty()) {
+			throw new CustomerException("No Customer Found");
+		}
+		
+		List<Ticket> tickets = ticketRepository.findByCustomer(opt.get());
+		
+		if(tickets.isEmpty()) {
+			throw new TicketException("No Tickets Found");
+		}
+		
+		return tickets;
+		
 	}
 
 	@Override
@@ -243,5 +194,5 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 		}
 
 	}
-
+	
 }
