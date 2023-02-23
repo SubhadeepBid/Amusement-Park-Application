@@ -9,6 +9,6 @@ import com.niccopark.entity.Slot;
 
 public interface SlotRepository extends JpaRepository<Slot, Integer> {
 
-//	public Optional<Slot> FindByStartTimeAndEndTime(LocalTime startTime, LocalTime endTime);
+	public Optional<Slot> findByStartTimeAndEndTime(LocalTime startTime, LocalTime endTime);
 
 }
