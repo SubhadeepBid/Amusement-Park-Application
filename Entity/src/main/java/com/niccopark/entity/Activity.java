@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Activity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer activityId;
@@ -41,7 +41,7 @@ public class Activity {
 	@JoinTable(joinColumns = @JoinColumn(name = "activityId"), inverseJoinColumns = @JoinColumn(name = "slotId"))
 	private List<Slot> slots = new ArrayList<>();
 //	private Set<Slot> slots = new HashSet<>(); // StackOverflow Error is coming
-	
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "activity")
 	private List<Ticket> tickets = new ArrayList<>();
 

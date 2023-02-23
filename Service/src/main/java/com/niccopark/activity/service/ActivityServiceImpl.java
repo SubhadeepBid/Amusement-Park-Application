@@ -10,6 +10,23 @@ import com.niccopark.entity.Activity;
 import com.niccopark.exceptions.ActivityException;
 import com.niccopark.repository.ActivityRepository;
 
+<<<<<<< HEAD
+public class ActivityServiceImpl implements ActivityService  {
+@Autowired
+	private  ActivityRepository activityrepo;
+	@Override
+	
+	public Activity insertActivity(Activity activity) throws ActivityException {
+//		Activity act=activityrepo.findByName(activity.getName());
+//
+//		
+//		if (act==null) {
+//			throw new ActivityException ("activity already exsit");
+//		}
+//		
+//		return activityrepo.save(activity);
+		return null;
+=======
 @Service
 public class ActivityServiceImpl implements ActivityService {
 	@Autowired
@@ -26,6 +43,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 		return activityrepo.save(activity);
 
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 	}
 
 	@Override
