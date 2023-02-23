@@ -1,5 +1,8 @@
 package com.niccopark.admin.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,22 +11,37 @@ import org.springframework.stereotype.Service;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.ValidateUserDTO;
+import com.niccopark.entity.Activity;
 import com.niccopark.entity.Admin;
+import com.niccopark.entity.Customer;
 import com.niccopark.entity.Slot;
+import com.niccopark.entity.Ticket;
+import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.AdminException;
-import com.niccopark.exceptions.CustomerException;
 import com.niccopark.exceptions.SlotException;
+import com.niccopark.repository.ActivityRepository;
 import com.niccopark.repository.AdminRepository;
+import com.niccopark.repository.CustomerRepository;
 import com.niccopark.repository.SlotRepository;
+import com.niccopark.repository.TicketRepository;
 
 @Service
 public class AdminServiceImpl implements AdminService {
+	
+	@Autowired
+	private CustomerRepository customerRepository;
 	
 	@Autowired
 	private AdminRepository adminRepository;
 	
 	@Autowired
 	private SlotRepository slotRepository;
+	
+	@Autowired
+	private ActivityRepository activityRepository;
+	
+	@Autowired
+	private TicketRepository ticketRepository;
 
 	@Override
 	public Admin insertAdmin(Admin admin) throws AdminException {
@@ -65,6 +83,9 @@ public class AdminServiceImpl implements AdminService {
 		if(admin.getEmail() != null) {
 			savedAdmin.setEmail(admin.getEmail());
 		}
+		if(admin.getName() != null) {
+			savedAdmin.setName(admin.getName());
+		}
 		
 		return adminRepository.save(savedAdmin);
 		
@@ -89,7 +110,7 @@ public class AdminServiceImpl implements AdminService {
 		Admin savedAdmin = validateAdmin(new ValidateUserDTO(dto.getOldUsername(), dto.getPassword()));
 		
 		if(savedAdmin != null && dto.getNewUsername() != null) {
-			if(adminRepository.findByUsername(dto.getOldUsername()).isEmpty()) {
+			if(adminRepository.findByUsername(dto.getNewUsername()).isEmpty()) {
 				savedAdmin.setUsername(dto.getNewUsername());
 				
 				return adminRepository.save(savedAdmin);
@@ -124,13 +145,75 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public Slot insertSlot(Slot slot) throws SlotException {
 		
-//		Optional<Slot> opt = slotRepository.FindByStartTimeAndEndTime(slot.getStartTime(), slot.getEndTime());
-//		
-//		if(opt.isPresent()) {
-//			throw new SlotException("Slot already saved");
-//		}
-//		
+		Optional<Slot> opt = slotRepository.findByStartTimeAndEndTime(slot.getStartTime(), slot.getEndTime());
+		
+		if(opt.isPresent()) {
+			throw new SlotException("Slot already saved");
+		}
+		
 		return slotRepository.save(slot);
+		
+	}
+
+	@Override
+	public List<Activity> getAllActivitiesByCustomerId(Integer customerId) throws ActivityException {
+		
+		List<Ticket> tickets = customerRepository.getAllTickets(customerId);
+		
+		if(tickets.isEmpty()) {
+			throw new ActivityException("No Activities Found");
+		}
+		
+		List<Activity> activities = new ArrayList<>();
+		
+		tickets.forEach(t -> {
+			activities.add(t.getActivity());
+		});
+		
+		return activities;
+	}
+
+	@Override
+	public List<Activity> getAllActivities() throws ActivityException {
+		
+		List<Activity> activities = activityRepository.findAll();
+		
+		if(activities.isEmpty()) {
+			throw new ActivityException("No Activities Found");
+		}
+		
+		return activities;
+	}
+
+	@Override
+	public List<Customer> getActivitiesCustomerWise() throws ActivityException {
+		
+		List<Customer> customers = customerRepository.findAll();
+		
+//		if(customers.isEmpty()) {
+//			throw new ActivityException("No Activities Found");
+//		}
+		
+		return customers;
+	}
+
+	@Override
+	public List<Activity> getActivitiesDateWise() throws ActivityException {
+		
+		List<Activity> tickets = ticketRepository.getAllTicketsDateWise();
+		
+		if(tickets.isEmpty()) {
+			throw new ActivityException("No Activity Found");
+		}
+		
+		return tickets;
+	}
+
+	@Override
+	public List<Activity> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate)
+			throws ActivityException {
+		
+		return null;
 		
 	}
 

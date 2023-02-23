@@ -32,8 +32,6 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	@Autowired
 	private CustomerRepository customerRepository;
 	
-	
-	
 	@Autowired
 	private TicketRepository ticketRepository;
 
@@ -122,6 +120,11 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	}
 
 	@Override
+<<<<<<< HEAD
+	public void updateTicket(TicketUpdateDTO activityDTO, Integer ticketId) throws ActivityException, SlotException {
+		// TODO Auto-generated method stub
+		
+=======
 	public void updateTicket(TicketUpdateDTO actvityDTO, Integer ticketId) throws ActivityException, SlotException {
 
 //		Optional<Ticket> opt = ticketRepository.findById(ticketId);
@@ -196,11 +199,25 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 //			throw new TicketException("Ticket can't update because activity id is wrong");
 //		}
 
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 	}
 
 	@Override
 	public Ticket deleteTicket(Integer ticketId) throws TicketException {
 		
+<<<<<<< HEAD
+		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+		
+		if(opt.isEmpty()) {
+			throw new TicketException("No Ticket Found");
+		}
+		
+		Ticket existingTicket = opt.get();
+		
+		ticketRepository.delete(existingTicket);
+		
+		return existingTicket;
+=======
 		Optional<Ticket> optional = ticketRepository.findById(ticketId);
 		
 		if(optional.isEmpty()) {
@@ -210,10 +227,28 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 			ticketRepository.delete(optional.get());
 			return optional.get();
 		}
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 		
 	}
 
 	@Override
+<<<<<<< HEAD
+	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws CustomerException, TicketException {
+		
+		Optional<Customer> opt = customerRepository.findById(customerId);
+		
+		if(opt.isEmpty()) {
+			throw new CustomerException("No Customer Found");
+		}
+		
+		List<Ticket> tickets = ticketRepository.findByCustomer(opt.get());
+		
+		if(tickets.isEmpty()) {
+			throw new TicketException("No Tickets Found");
+		}
+		
+		return tickets;
+=======
 	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws TicketException, CustomerException {
 		
 		Optional<Customer> optional = customerRepository.findById(customerId);
@@ -228,6 +263,7 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 			throw new CustomerException("Customer not present");
 			
 		}
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 		
 	}
 
@@ -264,5 +300,5 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 		}
 
 	}
-
+	
 }
