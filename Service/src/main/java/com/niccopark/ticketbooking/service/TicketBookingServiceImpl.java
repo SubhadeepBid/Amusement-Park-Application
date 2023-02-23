@@ -41,80 +41,80 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	@Autowired
 	private SlotRepository slotRepository;
 
-	@Override
-	public TicketDTO insertTicket(BookingDetails dto) throws TicketException, ActivityException, CustomerException {
-
-		Optional<Customer> optional = customerRepository.findById(dto.getCustomerId());
-
-		if (optional.isPresent()) {
-
-			Customer existingCustomer = optional.get();
-
-			Optional<Activity> option = activityRepository.findById(dto.getActivityId());
-
-			if (option.isPresent()) {
-
-				Activity existingActivity = option.get();
-				
-				System.out.println(existingActivity);
-				
-				Optional<Slot> slot = slotRepository.findById(dto.getSlotId());
-
-				if (slot.isPresent()) {
-
-					Set<Slot> slots = existingActivity.getSlots();
-
-					Slot existingSlot = slot.get();
-
-					if (slots.contains(existingSlot)) {
-
-						Ticket ticket = new Ticket();
-
-						ticket.setActivity(existingActivity);
-
-						ticket.setCustomer(existingCustomer);
-
-						ticket.setSlot(existingSlot);
-
-						existingActivity.getTickets().add(ticket);
-						
-						existingCustomer.getTickets().add(ticket);
-						
-						ticketRepository.save(ticket);
-						
-
-						TicketDTO ticketDTO = new TicketDTO();
-
-						ticketDTO.setActivityCharge(existingActivity.getCharges());
-
-						ticketDTO.setActivityName(existingActivity.getName());
-
-						ticketDTO.setCustomerName(existingCustomer.getName());
-
-						ticketDTO.setSlot(existingSlot);
-
-						return ticketDTO;
-
-					} else {
-
-						throw new ActivityException("Slot does not exists for this activity");
-
-					}
-
-				} else {
-
-					throw new ActivityException("Slot does not exists..");
-
-				}
-			} else {
-				throw new ActivityException("Activity not found..");
-			}
-
-		} else {
-			throw new CustomerException("Customer does not exists..");
-		}
-
-	}
+//	@Override
+//	public TicketDTO insertTicket(BookingDetails dto) throws TicketException, ActivityException, CustomerException {
+//
+//		Optional<Customer> optional = customerRepository.findById(dto.getCustomerId());
+//
+//		if (optional.isPresent()) {
+//
+//			Customer existingCustomer = optional.get();
+//
+//			Optional<Activity> option = activityRepository.findById(dto.getActivityId());
+//
+//			if (option.isPresent()) {
+//
+//				Activity existingActivity = option.get();
+//				
+//				System.out.println(existingActivity);
+//				
+//				Optional<Slot> slot = slotRepository.findById(dto.getSlotId());
+//
+//				if (slot.isPresent()) {
+//
+//					Set<Slot> slots = existingActivity.getSlots();
+//
+//					Slot existingSlot = slot.get();
+//
+//					if (slots.contains(existingSlot)) {
+//
+//						Ticket ticket = new Ticket();
+//
+//						ticket.setActivity(existingActivity);
+//
+//						ticket.setCustomer(existingCustomer);
+//
+//						ticket.setSlot(existingSlot);
+//
+//						existingActivity.getTickets().add(ticket);
+//						
+//						existingCustomer.getTickets().add(ticket);
+//						
+//						ticketRepository.save(ticket);
+//						
+//
+//						TicketDTO ticketDTO = new TicketDTO();
+//
+//						ticketDTO.setActivityCharge(existingActivity.getCharges());
+//
+//						ticketDTO.setActivityName(existingActivity.getName());
+//
+//						ticketDTO.setCustomerName(existingCustomer.getName());
+//
+//						ticketDTO.setSlot(existingSlot);
+//
+//						return ticketDTO;
+//
+//					} else {
+//
+//						throw new ActivityException("Slot does not exists for this activity");
+//
+//					}
+//
+//				} else {
+//
+//					throw new ActivityException("Slot does not exists..");
+//
+//				}
+//			} else {
+//				throw new ActivityException("Activity not found..");
+//			}
+//
+//		} else {
+//			throw new CustomerException("Customer does not exists..");
+//		}
+//
+//	}
 
 	@Override
 	public void updateTicket(ActvityDTO actvityDTO) throws ActivityException {
@@ -187,6 +187,13 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 			throw new CustomerException("Customer not found...");
 		}
 
+	}
+
+	@Override
+	public TicketDTO insertTicket(BookingDetails bookingDetailsDTO)
+			throws TicketException, ActivityException, CustomerException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
