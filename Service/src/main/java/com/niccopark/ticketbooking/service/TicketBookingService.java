@@ -19,12 +19,8 @@ public interface TicketBookingService {
 	
 	public Ticket deleteTicket(Integer ticketId) throws TicketException;
 	
-<<<<<<< HEAD
 	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws CustomerException, TicketException;
-=======
-	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws TicketException, CustomerException;
->>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
-	
+
 	public Double calculateBill(Integer customerId) throws CustomerException, TicketException;
 	
 }
