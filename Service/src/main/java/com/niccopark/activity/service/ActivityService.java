@@ -18,8 +18,13 @@ public interface ActivityService {
 
 	public List<Activity> viewActivitiesOfCharge(Float charges) throws ActivityException;
 
+<<<<<<< HEAD
 	public Integer countActivitiesOfCharges(Float charges) throws ActivityException;
 
+=======
+	public int countActivityofCharges(float charges) throws ActivityException;
+	
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 	public Activity addSlotsToActivity(Integer activityId, Integer slotId) throws ActivityException, SlotException;
 
 }

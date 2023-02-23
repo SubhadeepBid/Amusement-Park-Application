@@ -22,12 +22,22 @@ import com.niccopark.entity.Activity;
 public class ActivityController {
 
 	@Autowired
+<<<<<<< HEAD
 	private ActivityService activityService;
 
 	@PostMapping("/add_activity")
 	public ResponseEntity<Activity> insertActivityHandler(@RequestBody Activity activity) {
 		
 		Activity savedActivity = activityService.insertActivity(activity);
+=======
+	private ActivityService activi;
+	
+	@Autowired
+	private ActivityServiceDemo activityServiceDemo;
+	
+	@PostMapping("/activity")
+	public ResponseEntity<Activity> createActivityHandler(@RequestBody Activity activity) {
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 
 		return new ResponseEntity<>(savedActivity, HttpStatus.CREATED);
 
@@ -69,12 +79,20 @@ public class ActivityController {
 		
 	}
 	
+<<<<<<< HEAD
 	@PutMapping("/add_slots_to_activity/{activityId}/{slotId}")
 	public ResponseEntity<Activity> addSlotsToActivityHandler(@PathVariable("activityId") Integer activityId, @PathVariable("slotId") Integer slotId) {
 		
 		Activity updatedActivity = activityService.addSlotsToActivity(activityId, slotId);
 		
 		return new ResponseEntity<>(updatedActivity, HttpStatus.OK);
+=======
+	
+	@PostMapping("/activity/{aid}/{sid}")
+	public ResponseEntity<Activity> addSlotsToActivityHandler(@PathVariable("aid") Integer activityId, @PathVariable("sid") Integer slotId){
+		
+		return new ResponseEntity<>(activi.addSlotsToActivity(activityId, slotId), HttpStatus.CREATED);
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 		
 	}
 

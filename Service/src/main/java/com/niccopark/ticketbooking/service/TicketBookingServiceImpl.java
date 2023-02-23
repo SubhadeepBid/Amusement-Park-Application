@@ -120,14 +120,92 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	}
 
 	@Override
+<<<<<<< HEAD
 	public void updateTicket(TicketUpdateDTO activityDTO, Integer ticketId) throws ActivityException, SlotException {
 		// TODO Auto-generated method stub
 		
+=======
+	public void updateTicket(TicketUpdateDTO actvityDTO, Integer ticketId) throws ActivityException, SlotException {
+
+//		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+//		
+//		if(opt.isEmpty()) {
+//			
+//			throw new TicketException("Ticket not found..");
+//			
+//		}
+//		
+//		Ticket existingTicket = opt.get();
+//		
+//		Optional<Activity> opt1 = activityRepository.findByName(actvityDTO.getActivityName());
+//		
+//		if(opt1.isEmpty()) {
+//			throw new ActivityException("Actvity not found..");
+//		}
+//		
+//		Activity existingActivity = opt1.get();
+//		
+//		Optional<Slot> opt2 = slotRepository.findById(actvityDTO.getSlotId());
+//		
+//		if(opt2.isEmpty()) {
+//			
+//			throw new SlotException("Slot not found..");
+//			
+//		}
+//		
+//		Slot existingSlot = opt2.get();
+//		
+//		if(existingActivity.getSlots().contains(existingSlot)) {
+//			
+//			Activity previousActivity = existingTicket.getActivity();
+//			
+//			List<Ticket> tickets = previousActivity.getTickets();
+//			
+//			List<Ticket> updatedTicket = tickets.stream().filter(t -> t.getTicketId() == ticketId).collect(Collectors.toList());
+//			
+//			Object obj = ticketRepository.deleteTicket(existingTicket);
+//			
+//			System.out.println(obj.toString());
+//			
+//			
+//			
+//			
+////			existingTicket.setActivity(existingActivity);
+//			
+////			exi
+//			
+//		}
+		
+		
+//		Optional<Activity> existingActivity = arepo.findById(actvityDTO.getActivityId());
+//		
+//		if(existingActivity.isPresent()) {
+//			
+//			Activity activity = arepo.findByName(actvityDTO.getActivityName());
+//			
+//			if(activity != null) {
+//				
+//				
+//				
+//			}
+//			else {
+//				
+//				
+//				
+//			}
+//			
+//		}
+//		else {
+//			throw new TicketException("Ticket can't update because activity id is wrong");
+//		}
+
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 	}
 
 	@Override
 	public Ticket deleteTicket(Integer ticketId) throws TicketException {
 		
+<<<<<<< HEAD
 		Optional<Ticket> opt = ticketRepository.findById(ticketId);
 		
 		if(opt.isEmpty()) {
@@ -139,10 +217,22 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 		ticketRepository.delete(existingTicket);
 		
 		return existingTicket;
+=======
+		Optional<Ticket> optional = ticketRepository.findById(ticketId);
+		
+		if(optional.isEmpty()) {
+			throw new TicketException("Ticket not found");
+		}
+		else {
+			ticketRepository.delete(optional.get());
+			return optional.get();
+		}
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 		
 	}
 
 	@Override
+<<<<<<< HEAD
 	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws CustomerException, TicketException {
 		
 		Optional<Customer> opt = customerRepository.findById(customerId);
@@ -158,6 +248,22 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 		}
 		
 		return tickets;
+=======
+	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws TicketException, CustomerException {
+		
+		Optional<Customer> optional = customerRepository.findById(customerId);
+		
+		if(optional.isPresent()) {
+			
+			return optional.get().getTickets();
+			
+		}
+		else {
+			
+			throw new CustomerException("Customer not present");
+			
+		}
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 		
 	}
 

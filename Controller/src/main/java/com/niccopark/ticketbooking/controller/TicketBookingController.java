@@ -15,7 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.niccopark.dtos.BookingDetails;
 import com.niccopark.dtos.TicketDTO;
+<<<<<<< HEAD
 import com.niccopark.entity.Ticket;
+=======
+import com.niccopark.dtos.TicketUpdateDTO;
+import com.niccopark.entity.Ticket;
+import com.niccopark.exceptions.ActivityException;
+import com.niccopark.exceptions.CustomerException;
+import com.niccopark.exceptions.TicketException;
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 import com.niccopark.ticketbooking.service.TicketBookingService;
 
 @RestController
@@ -39,10 +47,27 @@ public class TicketBookingController {
 		
 	}
 	
+<<<<<<< HEAD
 	@GetMapping("/get_all_tickets_of_customer/{customerId}")
 	public ResponseEntity<List<Ticket>> getAllTicketsCustomerHandler(@PathVariable("customerId") Integer customerId) {
+=======
+	@GetMapping("/ticket/{cid}")
+	public ResponseEntity<List<Ticket>> getAllTicketHandler(@PathVariable("cid") Integer customerID)throws TicketException, CustomerException{
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 		
+<<<<<<< HEAD
 		return new ResponseEntity<>(ticketBookingService.viewAllTicketsCustomer(customerId), HttpStatus.OK);
+=======
+		return new ResponseEntity<List<Ticket>>(ticketBookingService.viewAllTicketsCustomer(customerID), HttpStatus.OK);
+		
+	}
+	
+	
+	@DeleteMapping("/ticket/{tid}")
+	public ResponseEntity<Ticket> deleteTicketHandler(@PathVariable("tid") Integer ticketID)throws TicketException, CustomerException{
+		
+		return new ResponseEntity<Ticket>(ticketBookingService.deleteTicket(ticketID), HttpStatus.OK);
+>>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 		
 	}
 
