@@ -21,7 +21,10 @@ public class ActivityController {
 
 	@Autowired
 	private ActivityService activi;
-
+	
+	@Autowired
+	private ActivityServiceDemo activityServiceDemo;
+	
 	@PostMapping("/activity")
 	public ResponseEntity<Activity> createActivityHandler(@RequestBody Activity activity) {
 
@@ -48,11 +51,11 @@ public class ActivityController {
 	public ResponseEntity<Integer> countActivityofCharges(@PathVariable Integer count) {
 		return new ResponseEntity<>(activi.countActivityofCharges(count), HttpStatus.OK);
 	}
-//	@PostMapping("/activity/{aid}/{sid}")
-//	public ResponseEntity<Activity> addSlotsToActivityHandler(@PathVariable("aid") Integer activityId, @PathVariable("sid") Integer slotId){
-//		
-//		return new ResponseEntity<>(activi.addSlotsToActivity(activityId, slotId), HttpStatus.CREATED);
-//		
-//	}
+	@PostMapping("/activity/{aid}/{sid}")
+	public ResponseEntity<Activity> addSlotsToActivityHandler(@PathVariable("aid") Integer activityId, @PathVariable("sid") Integer slotId){
+		
+		return new ResponseEntity<>(activityServiceDemo.addSlotsToActivity(activityId, slotId), HttpStatus.CREATED);
+		
+	}
 
 }

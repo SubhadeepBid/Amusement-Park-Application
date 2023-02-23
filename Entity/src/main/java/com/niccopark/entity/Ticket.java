@@ -29,13 +29,13 @@ public class Ticket {
 	
 	// Apply @JsonIgnore here to avoid StackOverflow error
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "customerId")
 	private Customer customer;
 	
 	// Apply @JsonIgnore here to avoid StackOverflow error
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "activityId")
 	private Activity activity;
 	

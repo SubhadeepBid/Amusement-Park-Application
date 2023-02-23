@@ -1,8 +1,11 @@
 package com.niccopark.ticketbooking.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.niccopark.dtos.BookingDetails;
 import com.niccopark.dtos.TicketDTO;
 import com.niccopark.dtos.TicketUpdateDTO;
+import com.niccopark.entity.Ticket;
 import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.CustomerException;
 import com.niccopark.exceptions.TicketException;
@@ -42,12 +46,18 @@ public class TicketBookingController {
 		
 	}
 	
-	@PutMapping("/bill/{tid}")
-	public ResponseEntity<String> updateTicketHandler(@PathVariable("tid") Integer ticketID, @RequestBody TicketUpdateDTO dto)throws CustomerException, TicketException{
+	@GetMapping("/ticket/{cid}")
+	public ResponseEntity<List<Ticket>> getAllTicketHandler(@PathVariable("cid") Integer customerID)throws TicketException, CustomerException{
 		
-		ticketBookingService.updateTicket(dto, ticketID);
+		return new ResponseEntity<List<Ticket>>(ticketBookingService.viewAllTicketsCustomer(customerID), HttpStatus.OK);
 		
-		return new ResponseEntity<String>("ok", HttpStatus.OK);
+	}
+	
+	
+	@DeleteMapping("/ticket/{tid}")
+	public ResponseEntity<Ticket> deleteTicketHandler(@PathVariable("tid") Integer ticketID)throws TicketException, CustomerException{
+		
+		return new ResponseEntity<Ticket>(ticketBookingService.deleteTicket(ticketID), HttpStatus.OK);
 		
 	}
 	
