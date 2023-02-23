@@ -9,6 +9,6 @@ import com.niccopark.entity.Activity;
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 	
 	
-	public Activity findByName(String name);
+	public Optional<Activity> findByName(String name);
 	
 }

@@ -14,15 +14,15 @@ public class ActivityServiceImpl implements ActivityService  {
 	@Override
 	
 	public Activity insertActivity(Activity activity) throws ActivityException {
-		Activity act=activityrepo.findByName(activity.getName());
-
-		
-		if (act==null) {
-			throw new ActivityException ("activity already exsit");
-		}
-		
-		return activityrepo.save(activity);
-		
+//		Activity act=activityrepo.findByName(activity.getName());
+//
+//		
+//		if (act==null) {
+//			throw new ActivityException ("activity already exsit");
+//		}
+//		
+//		return activityrepo.save(activity);
+		return null;
 	}
 
 	@Override
