@@ -1,6 +1,8 @@
 package com.niccopark.admin.controller;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.niccopark.admin.service.AdminService;
@@ -77,14 +80,14 @@ public class AdminController {
 		return new ResponseEntity<>(updatedAdmin, HttpStatus.OK);
 
 	}
-	
+
 	@DeleteMapping("/delete_admin/{adminId}")
 	public ResponseEntity<Admin> deleteAdminHandler(@PathVariable("adminId") Integer adminId) {
-		
+
 		Admin deletedAdmin = adminService.deleteAdmin(adminId);
-		
+
 		return new ResponseEntity<>(deletedAdmin, HttpStatus.OK);
-		
+
 	}
 
 	@PostMapping("/add_slot")
@@ -100,41 +103,66 @@ public class AdminController {
 		return new ResponseEntity<>(savedSlot, HttpStatus.CREATED);
 
 	}
-	
+
 	@GetMapping("/get_all_activities/{customerId}")
-	public ResponseEntity<List<Activity>> getAllActivitiesByCustomerIdHandler(@PathVariable("customerId") Integer customerID) {
-		
+	public ResponseEntity<List<Activity>> getAllActivitiesByCustomerIdHandler(
+			@PathVariable("customerId") Integer customerID) {
+
 		List<Activity> activities = adminService.getAllActivitiesByCustomerId(customerID);
-		
+
 		return new ResponseEntity<>(activities, HttpStatus.OK);
-		
+
 	}
-	
+
 	@GetMapping("/get_all_activities")
 	public ResponseEntity<List<Activity>> getAllActivitiesHandler() {
-		
+
 		List<Activity> activities = adminService.getAllActivities();
-		
+
 		return new ResponseEntity<>(activities, HttpStatus.OK);
-		
+
 	}
-	
+
 	@GetMapping("/get_activities_customerwise")
-	public ResponseEntity<List<Customer>> getActivitiesCustomerWise() {
-		
+	public ResponseEntity<List<Customer>> getActivitiesCustomerWiseHandler() {
+
 		List<Customer> customers = adminService.getActivitiesCustomerWise();
-		
+
 		return new ResponseEntity<>(customers, HttpStatus.OK);
-		
+
 	}
-	
+
 	@GetMapping("/get_activities_datewise")
-	public ResponseEntity<List<Activity>> getActivitiesDateWise() {
-		
+	public ResponseEntity<List<Activity>> getActivitiesDateWiseHandler() {
+
 		List<Activity> tickets = adminService.getActivitiesDateWise();
+
+		return new ResponseEntity<>(tickets, HttpStatus.OK);
+
+	}
+
+	@GetMapping("/get_all_activities_for_days/{customerId}")
+	public ResponseEntity<List<Ticket>> getAllActivitiesForDaysHandler(@PathVariable("customerId") Integer customerId,
+			@RequestParam String fromDate, @RequestParam String toDate) {
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
+		
+		LocalDate d1 = LocalDate.parse(fromDate, formatter);
+		LocalDate d2 = LocalDate.parse(toDate, formatter);
+		
+		
+		System.out.println("\n\n" + fromDate);
+		System.out.println("\n\n" + toDate);
+		
+		System.out.println(d1);
+		
+		System.out.println(d2);
+		
+		
+		List<Ticket> tickets = adminService.getAllActivitiesForDays(customerId, d1, d2);
 		
 		return new ResponseEntity<>(tickets, HttpStatus.OK);
-		
+
 	}
 
 }
