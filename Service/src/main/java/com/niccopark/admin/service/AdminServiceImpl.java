@@ -18,6 +18,7 @@ import com.niccopark.entity.Slot;
 import com.niccopark.entity.Ticket;
 import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.AdminException;
+import com.niccopark.exceptions.CustomerException;
 import com.niccopark.exceptions.SlotException;
 import com.niccopark.repository.ActivityRepository;
 import com.niccopark.repository.AdminRepository;
@@ -210,10 +211,24 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public List<Activity> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate)
+	public List<Ticket> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate)
 			throws ActivityException {
 		
-		return null;
+		Optional<Customer> opt = customerRepository.findById(customerId);
+		
+		if(opt.isEmpty()) {
+			throw new CustomerException("No Customer Found");
+		}
+		
+		Customer existingCustomer = opt.get();
+		
+		List<Ticket> tickets = ticketRepository.findByCustomerAndDateBetweenOrderByDate(existingCustomer, fromDate, toDate);
+		
+		if(tickets.isEmpty()) {
+			throw new ActivityException("No Activities Found");
+		}
+		
+		return tickets;
 		
 	}
 

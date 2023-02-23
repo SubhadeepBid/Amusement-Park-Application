@@ -10,6 +10,7 @@ import com.niccopark.entity.Activity;
 import com.niccopark.entity.Admin;
 import com.niccopark.entity.Customer;
 import com.niccopark.entity.Slot;
+import com.niccopark.entity.Ticket;
 import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.SlotException;
@@ -38,7 +39,7 @@ public interface AdminService {
 
 	public List<Activity> getActivitiesDateWise() throws ActivityException;
 
-	public List<Activity> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate)
+	public List<Ticket> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate)
 			throws ActivityException;
 
 }
