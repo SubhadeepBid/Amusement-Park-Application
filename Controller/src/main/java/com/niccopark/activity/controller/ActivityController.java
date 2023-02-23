@@ -22,22 +22,12 @@ import com.niccopark.entity.Activity;
 public class ActivityController {
 
 	@Autowired
-<<<<<<< HEAD
 	private ActivityService activityService;
 
 	@PostMapping("/add_activity")
 	public ResponseEntity<Activity> insertActivityHandler(@RequestBody Activity activity) {
-		
+
 		Activity savedActivity = activityService.insertActivity(activity);
-=======
-	private ActivityService activi;
-	
-	@Autowired
-	private ActivityServiceDemo activityServiceDemo;
-	
-	@PostMapping("/activity")
-	public ResponseEntity<Activity> createActivityHandler(@RequestBody Activity activity) {
->>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
 
 		return new ResponseEntity<>(savedActivity, HttpStatus.CREATED);
 
@@ -45,55 +35,48 @@ public class ActivityController {
 
 	@PutMapping("/update_activity")
 	public ResponseEntity<Activity> updateActivityHandler(@RequestBody Activity activity) {
-		
+
 		Activity updatedActivity = activityService.updateActivity(activity);
-		
+
 		return new ResponseEntity<>(updatedActivity, HttpStatus.OK);
-		
+
 	}
 
 	@DeleteMapping("/delete_activity/{activityId}")
 	public ResponseEntity<Activity> deleteActivityHandler(@PathVariable("activityId") Integer activityId) {
-		
+
 		Activity deletedActivity = activityService.deleteActivity(activityId);
-		
+
 		return new ResponseEntity<>(deletedActivity, HttpStatus.OK);
-		
+
 	}
 
 	@GetMapping("/view_activities_of_charges/{charges}")
 	public ResponseEntity<List<Activity>> viewActivitiesOfChargeHandler(@PathVariable("charges") Float charges) {
-		
+
 		List<Activity> activities = activityService.viewActivitiesOfCharge(charges);
-		
+
 		return new ResponseEntity<>(activities, HttpStatus.OK);
-		
+
 	}
 
 	@GetMapping("/count_activities_of_charges/{charges}")
 	public ResponseEntity<Integer> countActivityofChargesHandler(@PathVariable("charges") Float charges) {
-		
+
 		Integer count = activityService.countActivitiesOfCharges(charges);
-		
+
 		return new ResponseEntity<>(count, HttpStatus.OK);
-		
+
 	}
-	
-<<<<<<< HEAD
+
 	@PutMapping("/add_slots_to_activity/{activityId}/{slotId}")
-	public ResponseEntity<Activity> addSlotsToActivityHandler(@PathVariable("activityId") Integer activityId, @PathVariable("slotId") Integer slotId) {
-		
+	public ResponseEntity<Activity> addSlotsToActivityHandler(@PathVariable("activityId") Integer activityId,
+			@PathVariable("slotId") Integer slotId) {
+
 		Activity updatedActivity = activityService.addSlotsToActivity(activityId, slotId);
-		
+
 		return new ResponseEntity<>(updatedActivity, HttpStatus.OK);
-=======
-	
-	@PostMapping("/activity/{aid}/{sid}")
-	public ResponseEntity<Activity> addSlotsToActivityHandler(@PathVariable("aid") Integer activityId, @PathVariable("sid") Integer slotId){
-		
-		return new ResponseEntity<>(activi.addSlotsToActivity(activityId, slotId), HttpStatus.CREATED);
->>>>>>> branch 'master' of https://github.com/SubhadeepBid/agreeable-development-7620.git
-		
+
 	}
 
 }
