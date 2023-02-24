@@ -2,14 +2,14 @@ package com.niccopark.ticketbooking.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.niccopark.dtos.TicketUpdateDTO;
 import com.niccopark.dtos.BookingDetails;
 import com.niccopark.dtos.TicketDTO;
+import com.niccopark.dtos.TicketUpdateActivityNameDTO;
+import com.niccopark.dtos.TicketUpdateSlotOrDateDTO;
 import com.niccopark.entity.Activity;
 import com.niccopark.entity.Customer;
 import com.niccopark.entity.Slot;
@@ -31,7 +31,7 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 
 	@Autowired
 	private CustomerRepository customerRepository;
-	
+
 	@Autowired
 	private TicketRepository ticketRepository;
 
@@ -52,9 +52,9 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 			if (option.isPresent()) {
 
 				Activity existingActivity = option.get();
-				
+
 				System.out.println(existingActivity);
-				
+
 				Optional<Slot> slot = slotRepository.findById(dto.getSlotId());
 
 				if (slot.isPresent()) {
@@ -66,24 +66,23 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 					if (slots.contains(existingSlot)) {
 
 						Ticket ticket = new Ticket();
-						
+
 						ticket.setDate(dto.getDate());
-						
-						
+
 						ticket.setActivity(existingActivity);
 
 						ticket.setCustomer(existingCustomer);
 
 						ticket.setSlot(existingSlot);
-						
+
 						existingActivity.getTickets().add(ticket);
-						
+
 						existingCustomer.getTickets().add(ticket);
-						
+
 						ticketRepository.save(ticket);
-						
+
 						customerRepository.save(existingCustomer);
-						
+
 						activityRepository.save(existingActivity);
 
 						TicketDTO ticketDTO = new TicketDTO();
@@ -120,44 +119,37 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	}
 
 	@Override
-	public void updateTicket(TicketUpdateDTO activityDTO, Integer ticketId) throws ActivityException, SlotException {
-		
-		
-		
-	}
-	
-	@Override
 	public Ticket deleteTicket(Integer ticketId) throws TicketException {
-		
+
 		Optional<Ticket> opt = ticketRepository.findById(ticketId);
-		
-		if(opt.isEmpty()) {
+
+		if (opt.isEmpty()) {
 			throw new TicketException("No Ticket Found");
 		}
-		
+
 		Ticket existingTicket = opt.get();
-		
+
 		ticketRepository.delete(existingTicket);
-		
+
 		return existingTicket;
 
 	}
 
 	@Override
 	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws CustomerException, TicketException {
-		
+
 		Optional<Customer> opt = customerRepository.findById(customerId);
-		
-		if(opt.isEmpty()) {
+
+		if (opt.isEmpty()) {
 			throw new CustomerException("No Customer Found");
 		}
-		
+
 		List<Ticket> tickets = ticketRepository.findByCustomer(opt.get());
-		
-		if(tickets.isEmpty()) {
+
+		if (tickets.isEmpty()) {
 			throw new TicketException("No Tickets Found");
 		}
-		
+
 		return tickets;
 
 	}
@@ -195,5 +187,119 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 		}
 
 	}
+
 	
+	@Override
+	public TicketDTO updateTicketsActivityName(TicketUpdateActivityNameDTO ticketUpdateDTO, Integer ticketId)
+			throws ActivityException, SlotException, TicketException {
+
+		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+
+		if (opt.isEmpty()) {
+			throw new TicketException("No Tickets Found");
+		}
+
+		Ticket existingTicket = opt.get();
+		
+		Optional<Activity> opt1 = activityRepository.findByName(ticketUpdateDTO.getActivityName());
+		
+		if(opt1.isEmpty()) {
+			throw new ActivityException("No Activity Found");
+		}
+		
+		Activity existingActivity = opt1.get();
+		
+		Optional<Slot> opt2 = slotRepository.findById(ticketUpdateDTO.getSlotId());
+		
+		if(opt2.isEmpty()) {
+			throw new SlotException("No Slot Found");
+		}
+		
+		Slot existingSlot = opt2.get();
+		
+		if(existingActivity.getSlots().contains(existingSlot)) {
+			
+			existingTicket.setActivity(existingActivity);
+			
+			existingTicket.setSlot(existingSlot);
+			
+			if(ticketUpdateDTO.getDate() != null) {
+				existingTicket.setDate(ticketUpdateDTO.getDate());
+				
+				ticketRepository.save(existingTicket);
+				
+				TicketDTO ticketDTO = new TicketDTO();
+
+				ticketDTO.setActivityCharge(existingActivity.getCharges());
+
+				ticketDTO.setActivityName(existingActivity.getName());
+
+				ticketDTO.setCustomerName(existingTicket.getCustomer().getName());
+
+				ticketDTO.setSlot(existingSlot);
+
+				return ticketDTO;
+			}
+			else {
+				throw new TicketException("Please Enter A Date");
+			}
+			
+		}
+		else {
+			throw new ActivityException("Slot Is Not Available For This Activity");
+		}
+
+	}
+
+	
+	@Override
+	public TicketDTO updateTicketsSlotOrDate(TicketUpdateSlotOrDateDTO ticketUpdateDTO, Integer ticketId)
+			throws ActivityException, SlotException, TicketException {
+		
+		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+
+		if (opt.isEmpty()) {
+			throw new TicketException("No Tickets Found");
+		}
+
+		Ticket existingTicket = opt.get();
+		
+		Optional<Slot> opt1 = slotRepository.findById(ticketUpdateDTO.getSlotId());
+		
+		if(opt1.isEmpty()) {
+			throw new SlotException("No Slot Found");
+		}
+		
+		Slot existingSlot = opt1.get();
+		
+		Activity existingActivity = existingTicket.getActivity();
+		
+		if(existingActivity.getSlots().contains(existingSlot)) {
+			existingTicket.setSlot(existingSlot);
+			
+			if(ticketUpdateDTO.getDate() != null) {
+				existingTicket.setDate(ticketUpdateDTO.getDate());
+			}
+			
+			ticketRepository.save(existingTicket);
+			
+			TicketDTO ticketDTO = new TicketDTO();
+
+			ticketDTO.setActivityCharge(existingActivity.getCharges());
+
+			ticketDTO.setActivityName(existingActivity.getName());
+
+			ticketDTO.setCustomerName(existingTicket.getCustomer().getName());
+
+			ticketDTO.setSlot(existingSlot);
+
+			return ticketDTO;
+			
+		}
+		else {
+			throw new ActivityException("Slot Is Not Available For This Activity");
+		}
+		
+	}
+
 }

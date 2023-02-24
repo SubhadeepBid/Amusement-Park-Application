@@ -14,6 +14,8 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 
 	public List<Activity> findByCharges(Float charges);
 	
+	public List<Activity> findByChargesBetween(Float fromCharge, Float toCharge);
+	
 	@Query("select COUNT(activityId) from Activity WHERE charges=?1")
 	public Integer getCountOfActivitiesOfCharges(Float charges);
 

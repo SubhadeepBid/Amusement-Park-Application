@@ -3,17 +3,19 @@ package com.niccopark.admin.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.niccopark.dtos.CustomerWiseDTO;
+import com.niccopark.dtos.DateWiseDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Activity;
 import com.niccopark.entity.Admin;
-import com.niccopark.entity.Customer;
 import com.niccopark.entity.Slot;
 import com.niccopark.entity.Ticket;
 import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.SlotException;
+import com.niccopark.exceptions.TicketException;
 
 public interface AdminService {
 
@@ -35,11 +37,13 @@ public interface AdminService {
 
 	public List<Activity> getAllActivities() throws ActivityException;
 
-	public List<Customer> getActivitiesCustomerWise() throws ActivityException;
+	public List<CustomerWiseDTO> getActivitiesCustomerWise() throws ActivityException;
 
-	public List<Activity> getActivitiesDateWise() throws ActivityException;
+	public List<DateWiseDTO> getActivitiesDateWise() throws ActivityException;
 
 	public List<Ticket> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate)
 			throws ActivityException;
+	
+	public Double getTotalRevenue() throws TicketException;
 
 }

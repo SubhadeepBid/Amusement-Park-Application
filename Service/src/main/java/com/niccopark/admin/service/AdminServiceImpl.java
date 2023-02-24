@@ -2,12 +2,19 @@ package com.niccopark.admin.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.niccopark.dtos.ActivityDetailsDTO;
+import com.niccopark.dtos.ActivityDetailsDateWiseDTO;
+import com.niccopark.dtos.CustomerDetailsDTO;
+import com.niccopark.dtos.CustomerWiseDTO;
+import com.niccopark.dtos.DateWiseDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.ValidateUserDTO;
@@ -20,6 +27,7 @@ import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.CustomerException;
 import com.niccopark.exceptions.SlotException;
+import com.niccopark.exceptions.TicketException;
 import com.niccopark.repository.ActivityRepository;
 import com.niccopark.repository.AdminRepository;
 import com.niccopark.repository.CustomerRepository;
@@ -28,208 +36,305 @@ import com.niccopark.repository.TicketRepository;
 
 @Service
 public class AdminServiceImpl implements AdminService {
-	
+
 	@Autowired
 	private CustomerRepository customerRepository;
-	
+
 	@Autowired
 	private AdminRepository adminRepository;
-	
+
 	@Autowired
 	private SlotRepository slotRepository;
-	
+
 	@Autowired
 	private ActivityRepository activityRepository;
-	
+
 	@Autowired
 	private TicketRepository ticketRepository;
 
 	@Override
 	public Admin insertAdmin(Admin admin) throws AdminException {
-		
+
 		Optional<Admin> opt = adminRepository.findByUsername(admin.getUsername());
-		
-		if(opt.isPresent()) {
+
+		if (opt.isPresent()) {
 			throw new AdminException("Admin With Username " + admin.getUsername() + " Is Already Present...");
 		}
-		
+
 		return adminRepository.save(admin);
-		
+
 	}
-	
+
 	@Override
 	public Admin validateAdmin(ValidateUserDTO dto) throws AdminException {
-		
+
 		Optional<Admin> opt = adminRepository.findByUsernameAndPassword(dto.getUsername(), dto.getPassword());
-		
-		if(opt.isEmpty()) {
+
+		if (opt.isEmpty()) {
 			throw new AdminException("Wrong Username Or Password Entered...");
 		}
-		
+
 		return opt.get();
-		
+
 	}
 
 	@Override
 	public Admin updateAdminDetails(Admin admin) throws AdminException {
-		
+
 		Admin savedAdmin = validateAdmin(new ValidateUserDTO(admin.getUsername(), admin.getPassword()));
-		
-		if(admin.getAddress() != null) {
+
+		if (admin.getAddress() != null) {
 			savedAdmin.setAddress(admin.getAddress());
 		}
-		if(admin.getMobileNumber() != null) {
+		if (admin.getMobileNumber() != null) {
 			savedAdmin.setMobileNumber(admin.getMobileNumber());
 		}
-		if(admin.getEmail() != null) {
+		if (admin.getEmail() != null) {
 			savedAdmin.setEmail(admin.getEmail());
 		}
-		if(admin.getName() != null) {
+		if (admin.getName() != null) {
 			savedAdmin.setName(admin.getName());
 		}
-		
+
 		return adminRepository.save(savedAdmin);
-		
+
 	}
 
 	@Override
 	public Admin updateAdminPassword(UpdateUserPasswordDTO dto) throws AdminException {
-		
+
 		Admin savedAdmin = validateAdmin(new ValidateUserDTO(dto.getUsername(), dto.getOldPassword()));
-		
-		if(dto.getNewPassword() != null) {
+
+		if (dto.getNewPassword() != null) {
 			savedAdmin.setPassword(dto.getNewPassword());
 		}
-		
+
 		return adminRepository.save(savedAdmin);
-		
+
 	}
 
 	@Override
 	public Admin updateAdminUsername(UpdateUserUsernameDTO dto) throws AdminException {
-		
+
 		Admin savedAdmin = validateAdmin(new ValidateUserDTO(dto.getOldUsername(), dto.getPassword()));
-		
-		if(savedAdmin != null && dto.getNewUsername() != null) {
-			if(adminRepository.findByUsername(dto.getNewUsername()).isEmpty()) {
+
+		if (savedAdmin != null && dto.getNewUsername() != null) {
+			if (adminRepository.findByUsername(dto.getNewUsername()).isEmpty()) {
 				savedAdmin.setUsername(dto.getNewUsername());
-				
+
 				return adminRepository.save(savedAdmin);
-			}
-			else {
+			} else {
 				throw new AdminException("Admin Already Exist With Username " + dto.getNewUsername());
 			}
-		}
-		else {
+		} else {
 			throw new AdminException("Invalid Username or Password...");
 		}
-		
+
 	}
 
 	@Override
 	public Admin deleteAdmin(Integer adminId) throws AdminException {
-		
+
 		Optional<Admin> opt = adminRepository.findById(adminId);
-		
-		if(opt.isEmpty()) {
+
+		if (opt.isEmpty()) {
 			throw new AdminException("Admin Not Found With Admin ID : " + adminId);
 		}
-		
+
 		Admin savedAdmin = opt.get();
-		
+
 		adminRepository.delete(savedAdmin);
-		
+
 		return savedAdmin;
-		
+
 	}
 
 	@Override
 	public Slot insertSlot(Slot slot) throws SlotException {
-		
+
 		Optional<Slot> opt = slotRepository.findByStartTimeAndEndTime(slot.getStartTime(), slot.getEndTime());
-		
-		if(opt.isPresent()) {
+
+		if (opt.isPresent()) {
 			throw new SlotException("Slot already saved");
 		}
-		
+
 		return slotRepository.save(slot);
-		
+
 	}
 
 	@Override
 	public List<Activity> getAllActivitiesByCustomerId(Integer customerId) throws ActivityException {
-		
+
 		List<Ticket> tickets = customerRepository.getAllTickets(customerId);
-		
-		if(tickets.isEmpty()) {
+
+		if (tickets.isEmpty()) {
 			throw new ActivityException("No Activities Found");
 		}
-		
+
 		List<Activity> activities = new ArrayList<>();
-		
+
 		tickets.forEach(t -> {
 			activities.add(t.getActivity());
 		});
-		
+
 		return activities;
 	}
 
 	@Override
 	public List<Activity> getAllActivities() throws ActivityException {
-		
+
 		List<Activity> activities = activityRepository.findAll();
-		
-		if(activities.isEmpty()) {
+
+		if (activities.isEmpty()) {
 			throw new ActivityException("No Activities Found");
 		}
-		
+
 		return activities;
 	}
 
 	@Override
-	public List<Customer> getActivitiesCustomerWise() throws ActivityException {
-		
-		List<Customer> customers = customerRepository.findAll();
-		
-//		if(customers.isEmpty()) {
-//			throw new ActivityException("No Activities Found");
-//		}
-		
-		return customers;
+	public List<CustomerWiseDTO> getActivitiesCustomerWise() throws ActivityException {
+
+		List<Ticket> tickets = ticketRepository.getAllTicketsOrderByCustomer();
+
+		if (tickets.isEmpty()) {
+			throw new ActivityException("No Activities Found");
+		}
+
+		Map<CustomerDetailsDTO, List<ActivityDetailsDTO>> map = new HashMap<>();
+
+		tickets.forEach(t -> {
+			ActivityDetailsDTO dto = new ActivityDetailsDTO();
+			dto.setActivity(t.getActivity());
+			dto.setBookingTime(t.getBookingTime());
+			dto.setDate(t.getDate());
+			dto.setSlot(t.getSlot());
+
+			Customer c = t.getCustomer();
+
+			CustomerDetailsDTO dto1 = new CustomerDetailsDTO(c.getName(), c.getAddress(), c.getMobileNumber(),
+					c.getEmail(), c.getCustomerId());
+
+			if (map.containsKey(dto1)) {
+				map.get(dto1).add(dto);
+			} else {
+				List<ActivityDetailsDTO> dtos = new ArrayList<>();
+				dtos.add(dto);
+
+				map.put(dto1, dtos);
+			}
+		});
+
+		List<CustomerWiseDTO> list = new ArrayList<>();
+
+		for (Map.Entry m : map.entrySet()) {
+
+			CustomerWiseDTO dto = new CustomerWiseDTO();
+			dto.setCustomerDetails((CustomerDetailsDTO) m.getKey());
+			dto.setActivityDetails((List<ActivityDetailsDTO>) m.getValue());
+
+			list.add(dto);
+
+		}
+
+		return list;
+
 	}
 
 	@Override
-	public List<Activity> getActivitiesDateWise() throws ActivityException {
-		
-		List<Activity> tickets = ticketRepository.getAllTicketsDateWise();
-		
-		if(tickets.isEmpty()) {
+	public List<DateWiseDTO> getActivitiesDateWise() throws ActivityException {
+
+		List<Ticket> tickets = ticketRepository.getAllTicketsDateWise();
+
+//		tickets.forEach(System.out::println);
+
+		if (tickets.isEmpty()) {
 			throw new ActivityException("No Activity Found");
 		}
-		
-		return tickets;
+
+		Map<LocalDate, List<ActivityDetailsDateWiseDTO>> map = new HashMap<>();
+
+		tickets.forEach(t -> {
+			Customer c = t.getCustomer();
+
+			ActivityDetailsDateWiseDTO dto = new ActivityDetailsDateWiseDTO();
+			dto.setActivity(t.getActivity());
+			dto.setBookingTime(t.getBookingTime());
+			dto.setCustomerDetails(new CustomerDetailsDTO(c.getName(), c.getAddress(), c.getMobileNumber(),
+					c.getEmail(), c.getCustomerId()));
+//			dto.setDate(t.getDate());
+			dto.setSlot(t.getSlot());
+
+			if (map.containsKey(t.getDate())) {
+				map.get(t.getDate()).add(dto);
+			} else {
+				List<ActivityDetailsDateWiseDTO> dtos = new ArrayList<>();
+				dtos.add(dto);
+
+				map.put(t.getDate(), dtos);
+			}
+		});
+
+//		map.
+
+//		for (Map.Entry m : map.entrySet()) {
+//			System.out.println(m.getKey() + " " + m.getValue());
+//		}
+
+		List<DateWiseDTO> list = new ArrayList<>();
+
+		for (Map.Entry m : map.entrySet()) {
+
+			DateWiseDTO dto = new DateWiseDTO();
+			dto.setDate((LocalDate) m.getKey());
+			dto.setActivityDetails((List<ActivityDetailsDateWiseDTO>) m.getValue());
+			
+			list.add(dto);
+		}
+
+		return list;
 	}
 
 	@Override
 	public List<Ticket> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate)
 			throws ActivityException {
-		
+
 		Optional<Customer> opt = customerRepository.findById(customerId);
-		
-		if(opt.isEmpty()) {
+
+		if (opt.isEmpty()) {
 			throw new CustomerException("No Customer Found");
 		}
-		
+
 		Customer existingCustomer = opt.get();
-		
-		List<Ticket> tickets = ticketRepository.findByCustomerAndDateBetweenOrderByDate(existingCustomer, fromDate, toDate);
-		
-		if(tickets.isEmpty()) {
+
+		List<Ticket> tickets = ticketRepository.findByCustomerAndDateBetweenOrderByDate(existingCustomer, fromDate,
+				toDate);
+
+		if (tickets.isEmpty()) {
 			throw new ActivityException("No Activities Found");
 		}
-		
+
 		return tickets;
-		
+
+	}
+
+	@Override
+	public Double getTotalRevenue() throws TicketException {
+
+		List<Ticket> tickets = ticketRepository.findAll();
+
+		if (tickets.isEmpty()) {
+			throw new TicketException("No Tickets Found To Calculate Revenue");
+		}
+
+		Double revenue = 0.0;
+
+		for (Ticket t : tickets) {
+			revenue += t.getActivity().getCharges();
+		}
+
+		return revenue;
+
 	}
 
 }

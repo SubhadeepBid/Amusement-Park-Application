@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.niccopark.admin.service.AdminService;
+import com.niccopark.dtos.ActivityDetailsDTO;
+import com.niccopark.dtos.CustomerDetailsDTO;
+import com.niccopark.dtos.CustomerWiseDTO;
+import com.niccopark.dtos.DateWiseDTO;
 import com.niccopark.dtos.SlotDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
@@ -124,20 +129,20 @@ public class AdminController {
 	}
 
 	@GetMapping("/get_activities_customerwise")
-	public ResponseEntity<List<Customer>> getActivitiesCustomerWiseHandler() {
+	public ResponseEntity<List<CustomerWiseDTO>> getActivitiesCustomerWiseHandler() {
 
-		List<Customer> customers = adminService.getActivitiesCustomerWise();
+		List<CustomerWiseDTO> tickets = adminService.getActivitiesCustomerWise();
 
-		return new ResponseEntity<>(customers, HttpStatus.OK);
+		return new ResponseEntity<>(tickets, HttpStatus.OK);
 
 	}
 
 	@GetMapping("/get_activities_datewise")
-	public ResponseEntity<List<Activity>> getActivitiesDateWiseHandler() {
+	public ResponseEntity<List<DateWiseDTO>> getActivitiesDateWiseHandler() {
 
-		List<Activity> tickets = adminService.getActivitiesDateWise();
+		List<DateWiseDTO> dtos = adminService.getActivitiesDateWise();
 
-		return new ResponseEntity<>(tickets, HttpStatus.OK);
+		return new ResponseEntity<>(dtos, HttpStatus.OK);
 
 	}
 
@@ -150,19 +155,17 @@ public class AdminController {
 		LocalDate d1 = LocalDate.parse(fromDate, formatter);
 		LocalDate d2 = LocalDate.parse(toDate, formatter);
 		
-		
-		System.out.println("\n\n" + fromDate);
-		System.out.println("\n\n" + toDate);
-		
-		System.out.println(d1);
-		
-		System.out.println(d2);
-		
-		
 		List<Ticket> tickets = adminService.getAllActivitiesForDays(customerId, d1, d2);
 		
 		return new ResponseEntity<>(tickets, HttpStatus.OK);
 
+	}
+	
+	@GetMapping("/get_revenue")
+	public ResponseEntity<Double> getTotalRevenue() {
+		
+		return new ResponseEntity<>(adminService.getTotalRevenue(), HttpStatus.OK);
+		
 	}
 
 }

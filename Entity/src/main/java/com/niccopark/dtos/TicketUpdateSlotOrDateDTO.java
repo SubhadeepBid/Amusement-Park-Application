@@ -9,12 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TicketUpdateDTO {
-	
-	private String activityName;
-	
+public class TicketUpdateSlotOrDateDTO {
+
 	private Integer slotId;
-	
+
 	private LocalDate date;
-	
+
 }
