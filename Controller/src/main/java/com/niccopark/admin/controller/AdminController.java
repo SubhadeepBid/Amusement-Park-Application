@@ -34,6 +34,8 @@ import com.niccopark.entity.Customer;
 import com.niccopark.entity.Slot;
 import com.niccopark.entity.Ticket;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/admins")
 public class AdminController {
@@ -42,7 +44,7 @@ public class AdminController {
 	private AdminService adminService;
 
 	@PostMapping("/add_admin")
-	public ResponseEntity<Admin> insertAdminHandler(@RequestBody Admin admin) {
+	public ResponseEntity<Admin> insertAdminHandler(@Valid @RequestBody Admin admin) {
 
 		Admin savedAdmin = adminService.insertAdmin(admin);
 
@@ -51,7 +53,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/validate_admin")
-	public ResponseEntity<Admin> validateAdminHandler(@RequestBody ValidateUserDTO dto) {
+	public ResponseEntity<Admin> validateAdminHandler(@Valid @RequestBody ValidateUserDTO dto) {
 
 		Admin validatedAdmin = adminService.validateAdmin(dto);
 
@@ -60,7 +62,7 @@ public class AdminController {
 	}
 
 	@PutMapping("/update_admin_details")
-	public ResponseEntity<Admin> updateAdminDetailsHandler(@RequestBody Admin admin) {
+	public ResponseEntity<Admin> updateAdminDetailsHandler(@Valid @RequestBody Admin admin) {
 
 		Admin updatedAdmin = adminService.updateAdminDetails(admin);
 
@@ -69,7 +71,7 @@ public class AdminController {
 	}
 
 	@PutMapping("/update_admin_password")
-	public ResponseEntity<Admin> updateAdminPasswordHandler(@RequestBody UpdateUserPasswordDTO dto) {
+	public ResponseEntity<Admin> updateAdminPasswordHandler(@Valid @RequestBody UpdateUserPasswordDTO dto) {
 
 		Admin updatedAdmin = adminService.updateAdminPassword(dto);
 
@@ -78,7 +80,7 @@ public class AdminController {
 	}
 
 	@PutMapping("/update_admin_username")
-	public ResponseEntity<Admin> updateAdminUsernameHandler(@RequestBody UpdateUserUsernameDTO dto) {
+	public ResponseEntity<Admin> updateAdminUsernameHandler(@Valid @RequestBody UpdateUserUsernameDTO dto) {
 
 		Admin updatedAdmin = adminService.updateAdminUsername(dto);
 
