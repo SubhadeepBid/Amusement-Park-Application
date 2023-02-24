@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,6 +46,7 @@ public class Ticket {
 	@JoinColumn(name = "slotId")
 	private Slot slot;
 	
+	@FutureOrPresent(message = "Date should be in the future")
 	private LocalDate date;
 	
 	private LocalDateTime bookingTime = LocalDateTime.now();
