@@ -30,7 +30,7 @@ public class Ticket {
 	
 	// Apply @JsonIgnore here to avoid StackOverflow error
 //	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JoinColumn(name = "customerId")
 	private Customer customer;
 	

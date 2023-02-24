@@ -13,10 +13,13 @@ import com.niccopark.entity.Ticket;
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 
 	public List<Ticket> findByCustomer(Customer customer);
+	
+	@Query("from Ticket ORDER BY Customer")
+	public List<Ticket> getAllTicketsOrderByCustomer();
 
 	public List<Ticket> findByCustomerAndDateBetweenOrderByDate(Customer customer, LocalDate fromDate, LocalDate toDate);
 
-	@Query("select activity from Ticket ORDER BY date")
-	public List<Activity> getAllTicketsDateWise();
+	@Query("from Ticket ORDER BY date")
+	public List<Ticket> getAllTicketsDateWise();
 
 }

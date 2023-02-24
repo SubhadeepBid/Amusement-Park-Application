@@ -134,4 +134,65 @@ public class ActivityServiceImpl implements ActivityService {
     
 	}
 
+	
+	@Override
+	public List<Activity> getAllActivitiesBetweenRange(Float fromCharges, Float toCharges) throws ActivityException {
+		
+		if(toCharges < fromCharges) {
+			throw new ArithmeticException("To Charges Should Be Greater Than From Charges");
+		}
+		
+		List<Activity> activities = activityRepository.findByChargesBetween(fromCharges, toCharges);
+		
+		if(activities.isEmpty()) {
+			throw new ActivityException("No Activities Present");
+		}
+		
+		return activities;
+		
+	}
+
+	
+	@Override
+	public List<Slot> getAllSlotsForActivity(String activityName) throws ActivityException, SlotException {
+		
+		Optional<Activity> opt = activityRepository.findByName(activityName);
+		
+		if(opt.isEmpty()) {
+			throw new ActivityException("No Activity Found");
+		}
+		
+		Activity activity = opt.get();
+		
+		List<Slot> slots = activity.getSlots();
+		
+		if(slots.isEmpty()) {
+			throw new SlotException("No Slots Present");
+		}
+		
+		return slots;
+		
+	}
+
+	@Override
+	public List<Activity> getAllActivitiesFromSlot(Integer slotId) throws ActivityException, SlotException {
+		
+		Optional<Slot> opt = slotRepository.findById(slotId);
+		
+		if(opt.isEmpty()) {
+			throw new SlotException("No Slots Present");
+		}
+		
+		Slot existingSlot = opt.get();
+		
+		List<Activity> activities = slotRepository.getAllActivities(slotId);
+		
+		if(activities.isEmpty()) {
+			throw new ActivityException("No Activities Present");
+		}
+		
+		return activities;
+		
+	}
+
 }

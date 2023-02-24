@@ -2,7 +2,8 @@ package com.niccopark.ticketbooking.service;
 
 import java.util.List;
 
-import com.niccopark.dtos.TicketUpdateDTO;
+import com.niccopark.dtos.TicketUpdateActivityNameDTO;
+import com.niccopark.dtos.TicketUpdateSlotOrDateDTO;
 import com.niccopark.dtos.BookingDetails;
 import com.niccopark.dtos.TicketDTO;
 import com.niccopark.entity.Ticket;
@@ -15,7 +16,9 @@ public interface TicketBookingService {
 	
 	public TicketDTO insertTicket(BookingDetails bookingDetailsDTO) throws TicketException, ActivityException, CustomerException;
 	
-	public void updateTicket(TicketUpdateDTO activityDTO, Integer ticketId) throws ActivityException, SlotException;
+	public TicketDTO updateTicketsActivityName(TicketUpdateActivityNameDTO ticketUpdateDTO, Integer ticketId) throws ActivityException, SlotException, TicketException;
+	
+	public TicketDTO updateTicketsSlotOrDate(TicketUpdateSlotOrDateDTO ticketUpdateDTO, Integer ticketId) throws ActivityException, SlotException, TicketException;
 	
 	public Ticket deleteTicket(Integer ticketId) throws TicketException;
 	

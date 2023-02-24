@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.niccopark.activity.service.ActivityService;
 import com.niccopark.entity.Activity;
+import com.niccopark.entity.Slot;
 
 @RestController
 @RequestMapping("/activities")
@@ -78,5 +80,26 @@ public class ActivityController {
 		return new ResponseEntity<>(updatedActivity, HttpStatus.OK);
 
 	}
-
+	
+	@GetMapping("/get_activities_between_range")
+	public ResponseEntity<List<Activity>> getAllActivitiesBetweenRange(@RequestParam Float fromCharges, @RequestParam Float toCharges) {
+		
+		return new ResponseEntity<>(activityService.getAllActivitiesBetweenRange(fromCharges, toCharges), HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/get_all_slots_for_activity/{activityName}")
+	public ResponseEntity<List<Slot>> getAllSlotsForActivity(@PathVariable("activityName") String activityName) {
+		
+		return new ResponseEntity<>(activityService.getAllSlotsForActivity(activityName), HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/get_all_activities_for_slot/{slotId}")
+	public ResponseEntity<List<Activity>> getAllActivitiesFromSlot(@PathVariable("slotId") Integer slotId) {
+		
+		return new ResponseEntity<>(activityService.getAllActivitiesFromSlot(slotId), HttpStatus.OK);
+		
+	}
+ 
 }
