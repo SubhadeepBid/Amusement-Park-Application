@@ -33,6 +33,7 @@ import com.niccopark.entity.Admin;
 import com.niccopark.entity.Customer;
 import com.niccopark.entity.Slot;
 import com.niccopark.entity.Ticket;
+import com.niccopark.login.service.LoginLogoutService;
 
 import jakarta.validation.Valid;
 
@@ -43,6 +44,9 @@ public class AdminController {
 	@Autowired
 	private AdminService adminService;
 
+	@Autowired
+	private LoginLogoutService loginLogoutService;
+	
 	@PostMapping("/add_admin")
 	public ResponseEntity<Admin> insertAdminHandler(@Valid @RequestBody Admin admin) {
 
@@ -167,6 +171,13 @@ public class AdminController {
 	public ResponseEntity<Double> getTotalRevenue() {
 		
 		return new ResponseEntity<>(adminService.getTotalRevenue(), HttpStatus.OK);
+		
+	}
+	
+	@DeleteMapping("/log_out_admin/{uuid}")
+	public ResponseEntity<String> logOutHandler(@PathVariable("uuid") String uuid) {
+		
+		return new ResponseEntity<>(loginLogoutService.logOut(uuid), HttpStatus.OK);
 		
 	}
 
