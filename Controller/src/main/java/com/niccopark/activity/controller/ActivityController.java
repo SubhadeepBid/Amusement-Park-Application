@@ -19,6 +19,8 @@ import com.niccopark.activity.service.ActivityService;
 import com.niccopark.entity.Activity;
 import com.niccopark.entity.Slot;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/activities")
 public class ActivityController {
@@ -27,7 +29,7 @@ public class ActivityController {
 	private ActivityService activityService;
 
 	@PostMapping("/add_activity")
-	public ResponseEntity<Activity> insertActivityHandler(@RequestBody Activity activity) {
+	public ResponseEntity<Activity> insertActivityHandler(@Valid @RequestBody Activity activity) {
 
 		Activity savedActivity = activityService.insertActivity(activity);
 
@@ -36,7 +38,7 @@ public class ActivityController {
 	}
 
 	@PutMapping("/update_activity")
-	public ResponseEntity<Activity> updateActivityHandler(@RequestBody Activity activity) {
+	public ResponseEntity<Activity> updateActivityHandler(@Valid @RequestBody Activity activity) {
 
 		Activity updatedActivity = activityService.updateActivity(activity);
 

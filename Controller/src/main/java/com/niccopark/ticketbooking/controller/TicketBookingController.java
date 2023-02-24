@@ -22,6 +22,8 @@ import com.niccopark.entity.Ticket;
 //github.com/SubhadeepBid/agreeable-development-7620.git
 import com.niccopark.ticketbooking.service.TicketBookingService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/tickets")
 public class TicketBookingController {
@@ -30,21 +32,21 @@ public class TicketBookingController {
 	private TicketBookingService ticketBookingService;
 	
 	@PostMapping("/book_a_ticket")
-	public ResponseEntity<TicketDTO> insertTicketHandler(@RequestBody BookingDetails dto) {
+	public ResponseEntity<TicketDTO> insertTicketHandler(@Valid @RequestBody BookingDetails dto) {
 		
 		return new ResponseEntity<>(ticketBookingService.insertTicket(dto), HttpStatus.ACCEPTED);
 		
 	}
 	
 	@PutMapping("/update_tickets_activity_name/{ticketId}")
-	public ResponseEntity<TicketDTO> updateTicketsActivityNameHandler(@RequestBody TicketUpdateActivityNameDTO ticketUpdateDTO, @PathVariable("ticketId") Integer ticketId) {
+	public ResponseEntity<TicketDTO> updateTicketsActivityNameHandler(@Valid @RequestBody TicketUpdateActivityNameDTO ticketUpdateDTO, @PathVariable("ticketId") Integer ticketId) {
 		
 		return new ResponseEntity<>(ticketBookingService.updateTicketsActivityName(ticketUpdateDTO, ticketId), HttpStatus.OK);
 		
 	}
 	
 	@PutMapping("/update_tickets_slot_or_date/{ticketId}")
-	public ResponseEntity<TicketDTO> updateTicketsSlotOrDate(@RequestBody TicketUpdateSlotOrDateDTO ticketUpdateDTO, @PathVariable("ticketId") Integer ticketId) {
+	public ResponseEntity<TicketDTO> updateTicketsSlotOrDate(@Valid @RequestBody TicketUpdateSlotOrDateDTO ticketUpdateDTO, @PathVariable("ticketId") Integer ticketId) {
 		
 		return new ResponseEntity<>(ticketBookingService.updateTicketsSlotOrDate(ticketUpdateDTO, ticketId), HttpStatus.OK);
 		
