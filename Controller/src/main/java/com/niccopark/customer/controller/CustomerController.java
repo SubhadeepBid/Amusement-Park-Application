@@ -12,13 +12,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.niccopark.customer.service.CustomerService;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
+import com.niccopark.dtos.UserUpdateDTO;
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Customer;
+import com.niccopark.login.service.LoginLogoutService;
 
 import jakarta.validation.Valid;
 
@@ -28,6 +31,9 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private LoginLogoutService loginLogoutService;
 
 	@PostMapping("/add_customer")
 	public ResponseEntity<Customer> insertCustomerHandler(@Valid @RequestBody Customer customer) {
@@ -37,9 +43,9 @@ public class CustomerController {
 	}
 
 	@PutMapping("/update_customer_details")
-	public ResponseEntity<Customer> updateCustomerDetailsHandler(@Valid @RequestBody Customer customer) {
+	public ResponseEntity<Customer> updateCustomerDetailsHandler(@Valid @RequestBody UserUpdateDTO dto, @RequestParam String uuid) {
 
-		return new ResponseEntity<>(customerService.updateCustomerDetails(customer), HttpStatus.OK);
+		return new ResponseEntity<>(customerService.updateCustomerDetails(dto, uuid), HttpStatus.OK);
 		
 	}
 
@@ -78,10 +84,24 @@ public class CustomerController {
 		
 	}
 
-	@PostMapping("/validate_customer")
-	public ResponseEntity<Customer> validateCustomerHandler(@Valid @RequestBody ValidateUserDTO validateUserDTO) {
+	@PostMapping("/login_customer")
+	public ResponseEntity<String> loginCustomerHandler(@Valid @RequestBody ValidateUserDTO validateUserDTO) {
 		
-		return new ResponseEntity<>(customerService.validateCustomer(validateUserDTO), HttpStatus.OK);
+		return new ResponseEntity<>(customerService.loginCustomer(validateUserDTO), HttpStatus.OK);
 		
 	}
+	
+//	public ResponseEntity<String> validateCustomerHandler(@Valid @RequestBody ValidateUserDTO validateUserDTO) {
+//		
+//		return new ResponseEntity<>(customerService.validateCustomer(validateUserDTO), HttpStatus.OK);
+//		
+//	}
+	
+	@DeleteMapping("/log_out_customer/{uuid}")
+	public ResponseEntity<String> logOutHandler(@PathVariable("uuid") String uuid) {
+		
+		return new ResponseEntity<>(loginLogoutService.logOut(uuid), HttpStatus.OK);
+		
+	}
+	
 }

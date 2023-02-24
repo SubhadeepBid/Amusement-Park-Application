@@ -56,9 +56,15 @@ public class AdminServiceImpl implements AdminService {
 	public Admin insertAdmin(Admin admin) throws AdminException {
 
 		Optional<Admin> opt = adminRepository.findByUsername(admin.getUsername());
-
+		
 		if (opt.isPresent()) {
-			throw new AdminException("Admin With Username " + admin.getUsername() + " Is Already Present...");
+			throw new AdminException("Username Already Exists...");
+		}
+		
+		Optional<Customer> opt1 = customerRepository.findByUsername(admin.getUsername());
+		
+		if (opt1.isPresent()) {
+			throw new AdminException("Username Already Exists...");
 		}
 
 		return adminRepository.save(admin);
