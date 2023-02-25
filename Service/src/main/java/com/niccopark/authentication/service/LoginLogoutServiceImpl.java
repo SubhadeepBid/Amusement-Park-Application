@@ -1,4 +1,4 @@
-package com.niccopark.login.service;
+package com.niccopark.authentication.service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -23,7 +23,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 	@Override
 	public String getUuid(String username, Role role) {
 
-		Optional<CurrentUserSession> opt = sessionRepository.findById(username);
+		Optional<CurrentUserSession> opt = sessionRepository.findByUsername(username);
 
 		if (opt.isPresent()) {
 			sessionRepository.delete(opt.get());
@@ -36,7 +36,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 		currentUserSession.setRole(role);
 		currentUserSession.setUuid(key);
 		currentUserSession.setSessionStart(LocalDateTime.now());
-		currentUserSession.setSessionExpiry(currentUserSession.getSessionStart().plusMinutes(2));
+		currentUserSession.setSessionExpiry(currentUserSession.getSessionStart().plusMinutes(20));
 		
 		sessionRepository.save(currentUserSession);
 		
@@ -47,7 +47,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 	@Override
 	public FlagDTO validateUuid(String uuid) {
 		
-		Optional<CurrentUserSession> opt = sessionRepository.findByUuid(uuid);
+		Optional<CurrentUserSession> opt = sessionRepository.findById(uuid);
 		
 		FlagDTO dto = new FlagDTO();
 		
@@ -80,7 +80,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 	@Override
 	public String logOut(String uuid) {
 		
-		Optional<CurrentUserSession> opt = sessionRepository.findByUuid(uuid);
+		Optional<CurrentUserSession> opt = sessionRepository.findById(uuid);
 		
 		if(opt.isEmpty()) {
 			throw new LoginException("No User Found");

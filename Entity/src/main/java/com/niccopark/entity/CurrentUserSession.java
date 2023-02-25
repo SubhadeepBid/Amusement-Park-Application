@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 public class CurrentUserSession {
 
 	@Id
-	private String username;
-
 	private String uuid;
+
+	private String username;
 
 	private LocalDateTime sessionStart;
 	

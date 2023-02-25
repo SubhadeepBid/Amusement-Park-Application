@@ -6,22 +6,29 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.niccopark.admin.service.AdminService;
+import com.niccopark.authentication.service.LoginLogoutService;
 import com.niccopark.dtos.FlagDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.UserUpdateDTO;
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Admin;
+import com.niccopark.entity.CurrentUserSession;
 import com.niccopark.entity.Customer;
 import com.niccopark.entity.Role;
+import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.CustomerException;
-import com.niccopark.login.service.LoginLogoutService;
 import com.niccopark.repository.AdminRepository;
+import com.niccopark.repository.CurrentUserSessionRepository;
 import com.niccopark.repository.CustomerRepository;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
+	@Autowired
+	private CurrentUserSessionRepository currentUserSessionRepository;
+	
 	@Autowired
 	private CustomerRepository customerRepository;
 
@@ -30,6 +37,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	private LoginLogoutService loginLogoutService;
+	
+	@Autowired
+	private AdminService adminService;
 
 	@Override
 	public Customer insertCustomer(Customer customer) throws CustomerException {
@@ -53,7 +63,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer updateCustomerDetails(UserUpdateDTO dto, String uuid) throws CustomerException {
 		
-		String username = getValidatedUsername(uuid);
+		String username = getValidatedUsernameForCustomer(uuid);
 		
 		Customer savecustomer = customerRepository.findByUsername(username).get();
 
@@ -75,9 +85,11 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer updateCustomerPassword(UpdateUserPasswordDTO dto) throws CustomerException {
+	public Customer updateCustomerPassword(UpdateUserPasswordDTO dto, String uuid) throws CustomerException {
 
-		Customer savedCustomer = validateCustomer(new ValidateUserDTO(dto.getUsername(), dto.getOldPassword()));
+		String username = getValidatedUsernameForCustomer(uuid);
+		
+		Customer savedCustomer = validateCustomer(new ValidateUserDTO(username, dto.getOldPassword()));
 
 		if (dto.getNewPassword() != null) {
 			savedCustomer.setPassword(dto.getNewPassword());
@@ -88,28 +100,42 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer updateCustomerUsername(UpdateUserUsernameDTO dto) throws CustomerException {
+	public Customer updateCustomerUsername(UpdateUserUsernameDTO dto, String uuid) throws CustomerException {
 
-		Customer savedCustomer = validateCustomer(new ValidateUserDTO(dto.getOldUsername(), dto.getPassword()));
+		String username = getValidatedUsernameForCustomer(uuid);
+		
+		Customer savedCustomer = validateCustomer(new ValidateUserDTO(username, dto.getPassword()));
 
 		if (savedCustomer != null && dto.getNewUsername() != null) {
-			if (customerRepository.findByUsername(dto.getNewUsername()).isEmpty()) {
+			if (customerRepository.findByUsername(dto.getNewUsername()).isEmpty() && adminRepository.findByUsername(dto.getNewUsername()).isEmpty()) {
 				savedCustomer.setUsername(dto.getNewUsername());
 
+				CurrentUserSession session = currentUserSessionRepository.findById(uuid).get();
+				session.setUsername(dto.getNewUsername());
+				
+				currentUserSessionRepository.save(session);
 				return customerRepository.save(savedCustomer);
 			} else {
-				throw new CustomerException("Customer Already Exist With Username " + dto.getNewUsername());
+				throw new CustomerException("Username Already Exists...");
 			}
 		} else {
-			throw new CustomerException("Invalid Username or Password...");
+			throw new CustomerException("Invalid Password...");
 		}
 
 	}
 
 	@Override
-	public Customer deleteCustomer(Integer customerId) throws CustomerException {
+	public Customer deleteCustomer(Integer customerId, String uuid) throws AdminException, CustomerException {
 
-		Customer savedCustomer = viewCustomer(customerId);
+		String username = adminService.getValidatedUsernameForAdmin(uuid);
+
+		Optional<Customer> opt = customerRepository.findById(customerId);
+		
+		if (opt.isEmpty()) {
+			throw new CustomerException("Customer Not Found With Customer ID : " + customerId);
+		}
+
+		Customer savedCustomer = opt.get();
 
 		customerRepository.delete(savedCustomer);
 
@@ -118,7 +144,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<Customer> viewCustomers() throws CustomerException {
+	public List<Customer> viewCustomers(String uuid) throws CustomerException {
+
+		String username = adminService.getValidatedUsernameForAdmin(uuid);
 
 		List<Customer> customers = customerRepository.findAll();
 
@@ -131,7 +159,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer viewCustomer(Integer customerId) throws CustomerException {
+	public Customer viewCustomer(Integer customerId, String uuid) throws CustomerException {
+
+		String username = adminService.getValidatedUsernameForAdmin(uuid);
 
 		Optional<Customer> opt = customerRepository.findById(customerId);
 
@@ -162,7 +192,7 @@ public class CustomerServiceImpl implements CustomerService {
 		Customer savedCustomer = validateCustomer(dto);
 
 		if (savedCustomer == null) {
-			throw new CustomerException("Customer Does not Exist...");
+			throw new CustomerException("Customer Does Not Exist...");
 		}
 
 		return loginLogoutService.getUuid(dto.getUsername(), Role.CUSTOMER);
@@ -170,7 +200,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public String getValidatedUsername(String uuid) throws CustomerException {
+	public String getValidatedUsernameForCustomer(String uuid) throws CustomerException {
 		
 		FlagDTO dto = loginLogoutService.validateUuid(uuid);
 

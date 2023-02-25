@@ -1,4 +1,4 @@
-package com.niccopark.login.service;
+package com.niccopark.authentication.service;
 
 import com.niccopark.dtos.FlagDTO;
 import com.niccopark.entity.Role;
