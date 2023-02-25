@@ -8,6 +8,6 @@ import com.niccopark.entity.CurrentUserSession;
 
 public interface CurrentUserSessionRepository extends JpaRepository<CurrentUserSession, String> {
 	
-	public Optional<CurrentUserSession> findByUuid(String uuid);
+	public Optional<CurrentUserSession> findByUsername(String username);
 
 }

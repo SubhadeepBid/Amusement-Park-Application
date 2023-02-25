@@ -10,17 +10,22 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.niccopark.authentication.service.LoginLogoutService;
 import com.niccopark.dtos.ActivityDetailsDTO;
 import com.niccopark.dtos.ActivityDetailsDateWiseDTO;
 import com.niccopark.dtos.CustomerDetailsDTO;
 import com.niccopark.dtos.CustomerWiseDTO;
 import com.niccopark.dtos.DateWiseDTO;
+import com.niccopark.dtos.FlagDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
+import com.niccopark.dtos.UserUpdateDTO;
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Activity;
 import com.niccopark.entity.Admin;
+import com.niccopark.entity.CurrentUserSession;
 import com.niccopark.entity.Customer;
+import com.niccopark.entity.Role;
 import com.niccopark.entity.Slot;
 import com.niccopark.entity.Ticket;
 import com.niccopark.exceptions.ActivityException;
@@ -28,8 +33,10 @@ import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.CustomerException;
 import com.niccopark.exceptions.SlotException;
 import com.niccopark.exceptions.TicketException;
+import com.niccopark.exceptions.UserException;
 import com.niccopark.repository.ActivityRepository;
 import com.niccopark.repository.AdminRepository;
+import com.niccopark.repository.CurrentUserSessionRepository;
 import com.niccopark.repository.CustomerRepository;
 import com.niccopark.repository.SlotRepository;
 import com.niccopark.repository.TicketRepository;
@@ -37,6 +44,9 @@ import com.niccopark.repository.TicketRepository;
 @Service
 public class AdminServiceImpl implements AdminService {
 
+	@Autowired
+	private CurrentUserSessionRepository currentUserSessionRepository;
+	
 	@Autowired
 	private CustomerRepository customerRepository;
 
@@ -51,6 +61,9 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	private TicketRepository ticketRepository;
+	
+	@Autowired
+	private LoginLogoutService loginLogoutService;
 
 	@Override
 	public Admin insertAdmin(Admin admin) throws AdminException {
@@ -85,21 +98,23 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Admin updateAdminDetails(Admin admin) throws AdminException {
+	public Admin updateAdminDetails(UserUpdateDTO dto, String uuid) throws AdminException {
 
-		Admin savedAdmin = validateAdmin(new ValidateUserDTO(admin.getUsername(), admin.getPassword()));
+		String username = getValidatedUsernameForAdmin(uuid);
+		
+		Admin savedAdmin = adminRepository.findByUsername(username).get();
 
-		if (admin.getAddress() != null) {
-			savedAdmin.setAddress(admin.getAddress());
+		if (dto.getAddress() != null) {
+			savedAdmin.setAddress(dto.getAddress());
 		}
-		if (admin.getMobileNumber() != null) {
-			savedAdmin.setMobileNumber(admin.getMobileNumber());
+		if (dto.getMobileNumber() != null) {
+			savedAdmin.setMobileNumber(dto.getMobileNumber());
 		}
-		if (admin.getEmail() != null) {
-			savedAdmin.setEmail(admin.getEmail());
+		if (dto.getEmail() != null) {
+			savedAdmin.setEmail(dto.getEmail());
 		}
-		if (admin.getName() != null) {
-			savedAdmin.setName(admin.getName());
+		if (dto.getName() != null) {
+			savedAdmin.setName(dto.getName());
 		}
 
 		return adminRepository.save(savedAdmin);
@@ -107,9 +122,11 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Admin updateAdminPassword(UpdateUserPasswordDTO dto) throws AdminException {
+	public Admin updateAdminPassword(UpdateUserPasswordDTO dto, String uuid) throws AdminException {
 
-		Admin savedAdmin = validateAdmin(new ValidateUserDTO(dto.getUsername(), dto.getOldPassword()));
+		String username = getValidatedUsernameForAdmin(uuid);
+		
+		Admin savedAdmin = validateAdmin(new ValidateUserDTO(username, dto.getOldPassword()));
 
 		if (dto.getNewPassword() != null) {
 			savedAdmin.setPassword(dto.getNewPassword());
@@ -120,27 +137,34 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Admin updateAdminUsername(UpdateUserUsernameDTO dto) throws AdminException {
+	public Admin updateAdminUsername(UpdateUserUsernameDTO dto, String uuid) throws AdminException {
 
-		Admin savedAdmin = validateAdmin(new ValidateUserDTO(dto.getOldUsername(), dto.getPassword()));
+		String username = getValidatedUsernameForAdmin(uuid);
+		
+		Admin savedAdmin = validateAdmin(new ValidateUserDTO(username, dto.getPassword()));
 
 		if (savedAdmin != null && dto.getNewUsername() != null) {
-			if (adminRepository.findByUsername(dto.getNewUsername()).isEmpty()) {
+			if (adminRepository.findByUsername(dto.getNewUsername()).isEmpty() && customerRepository.findByUsername(dto.getNewUsername()).isEmpty()) {
 				savedAdmin.setUsername(dto.getNewUsername());
 
+				CurrentUserSession session = currentUserSessionRepository.findById(uuid).get();
+				session.setUsername(dto.getNewUsername());
+				
 				return adminRepository.save(savedAdmin);
 			} else {
-				throw new AdminException("Admin Already Exist With Username " + dto.getNewUsername());
+				throw new AdminException("Username Already Exists...");
 			}
 		} else {
-			throw new AdminException("Invalid Username or Password...");
+			throw new AdminException("Invalid Password...");
 		}
 
 	}
 
 	@Override
-	public Admin deleteAdmin(Integer adminId) throws AdminException {
+	public Admin deleteAdmin(Integer adminId, String uuid) throws AdminException {
 
+		String username = getValidatedUsernameForAdmin(uuid);
+		
 		Optional<Admin> opt = adminRepository.findById(adminId);
 
 		if (opt.isEmpty()) {
@@ -156,7 +180,9 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Slot insertSlot(Slot slot) throws SlotException {
+	public Slot insertSlot(Slot slot, String uuid) throws AdminException, SlotException {
+		
+		String username = getValidatedUsernameForAdmin(uuid);
 
 		Optional<Slot> opt = slotRepository.findByStartTimeAndEndTime(slot.getStartTime(), slot.getEndTime());
 
@@ -169,8 +195,10 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public List<Activity> getAllActivitiesByCustomerId(Integer customerId) throws ActivityException {
+	public List<Activity> getAllActivitiesByCustomerId(Integer customerId, String uuid) throws AdminException, ActivityException {
 
+		String username = getValidatedUsernameForAdmin(uuid);
+		
 		List<Ticket> tickets = customerRepository.getAllTickets(customerId);
 
 		if (tickets.isEmpty()) {
@@ -183,24 +211,32 @@ public class AdminServiceImpl implements AdminService {
 			activities.add(t.getActivity());
 		});
 
-		return activities;
+		return activities; // Add Date And Slot
 	}
 
 	@Override
-	public List<Activity> getAllActivities() throws ActivityException {
+	public List<Activity> getAllActivities(String uuid) throws UserException, ActivityException {
 
-		List<Activity> activities = activityRepository.findAll();
+		if(loginLogoutService.validateUuid(uuid).isFlag()) {
+			List<Activity> activities = activityRepository.findAll();
 
-		if (activities.isEmpty()) {
-			throw new ActivityException("No Activities Found");
+			if (activities.isEmpty()) {
+				throw new ActivityException("No Activities Found");
+			}
+
+			return activities;
 		}
-
-		return activities;
+		else {
+			throw new UserException("User Not Authorized");
+		}
+		
 	}
 
 	@Override
-	public List<CustomerWiseDTO> getActivitiesCustomerWise() throws ActivityException {
+	public List<CustomerWiseDTO> getActivitiesCustomerWise(String uuid) throws AdminException, ActivityException {
 
+		String username = getValidatedUsernameForAdmin(uuid);
+		
 		List<Ticket> tickets = ticketRepository.getAllTicketsOrderByCustomer();
 
 		if (tickets.isEmpty()) {
@@ -248,8 +284,10 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public List<DateWiseDTO> getActivitiesDateWise() throws ActivityException {
+	public List<DateWiseDTO> getActivitiesDateWise(String uuid) throws AdminException, ActivityException {
 
+		String username = getValidatedUsernameForAdmin(uuid);
+		
 		List<Ticket> tickets = ticketRepository.getAllTicketsDateWise();
 
 //		tickets.forEach(System.out::println);
@@ -302,9 +340,11 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public List<Ticket> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate)
-			throws ActivityException {
+	public List<Ticket> getAllActivitiesForDays(Integer customerId, LocalDate fromDate, LocalDate toDate, String uuid)
+			throws AdminException, ActivityException {
 
+		String username = getValidatedUsernameForAdmin(uuid);
+		
 		Optional<Customer> opt = customerRepository.findById(customerId);
 
 		if (opt.isEmpty()) {
@@ -325,8 +365,10 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Double getTotalRevenue() throws TicketException {
+	public Double getTotalRevenue(String uuid) throws AdminException, TicketException {
 
+		String username = getValidatedUsernameForAdmin(uuid);
+		
 		List<Ticket> tickets = ticketRepository.findAll();
 
 		if (tickets.isEmpty()) {
@@ -341,6 +383,38 @@ public class AdminServiceImpl implements AdminService {
 
 		return revenue;
 
+	}
+
+	@Override
+	public String loginAdmin(ValidateUserDTO dto) throws AdminException {
+		
+		Admin savedAdmin = validateAdmin(dto);
+		
+		if(savedAdmin == null) {
+			throw new AdminException("Admin Does Not Exist...");
+		}
+		
+		return loginLogoutService.getUuid(dto.getUsername(), Role.ADMIN);
+		
+	}
+
+	@Override
+	public String getValidatedUsernameForAdmin(String uuid) throws AdminException {
+
+		FlagDTO dto = loginLogoutService.validateUuid(uuid);
+
+		if (dto.isFlag()) {
+			if (dto.getRole() == Role.ADMIN) {
+
+				return dto.getUsername();
+
+			} else {
+				throw new AdminException("User Authorization Failed");
+			}
+		} else {
+			throw new AdminException("Please Log In First");
+		}
+		
 	}
 
 }
