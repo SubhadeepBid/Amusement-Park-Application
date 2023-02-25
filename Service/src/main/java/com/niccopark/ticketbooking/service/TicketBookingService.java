@@ -14,16 +14,16 @@ import com.niccopark.exceptions.TicketException;
 
 public interface TicketBookingService {
 	
-	public TicketDTO insertTicket(BookingDetails bookingDetailsDTO) throws TicketException, ActivityException, CustomerException;
+	public TicketDTO insertTicket(BookingDetails bookingDetailsDTO, String customerUuid) throws TicketException, ActivityException, CustomerException;
 	
-	public TicketDTO updateTicketsActivityName(TicketUpdateActivityNameDTO ticketUpdateDTO, Integer ticketId) throws ActivityException, SlotException, TicketException;
+	public TicketDTO updateTicketsActivityName(TicketUpdateActivityNameDTO ticketUpdateDTO, Integer ticketId, String customerUuid) throws ActivityException, SlotException, TicketException, CustomerException;
 	
-	public TicketDTO updateTicketsSlotOrDate(TicketUpdateSlotOrDateDTO ticketUpdateDTO, Integer ticketId) throws ActivityException, SlotException, TicketException;
+	public TicketDTO updateTicketsSlotOrDate(TicketUpdateSlotOrDateDTO ticketUpdateDTO, Integer ticketId, String customerUuid) throws ActivityException, SlotException, TicketException, CustomerException;
 	
-	public Ticket deleteTicket(Integer ticketId) throws TicketException;
+	public Ticket deleteTicket(Integer ticketId, String customerUuid) throws TicketException, CustomerException;
 	
-	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws CustomerException, TicketException;
+	public List<Ticket> viewAllTicketsCustomer(String customerUuid) throws CustomerException, TicketException;
 
-	public Double calculateBill(Integer customerId) throws CustomerException, TicketException;
+	public Double calculateBill(String customerUuid) throws CustomerException, TicketException;
 	
 }
