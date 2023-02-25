@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.niccopark.customer.service.CustomerService;
 import com.niccopark.dtos.BookingDetails;
 import com.niccopark.dtos.TicketDTO;
 import com.niccopark.dtos.TicketUpdateActivityNameDTO;
@@ -38,113 +39,131 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	@Autowired
 	private SlotRepository slotRepository;
 
+	@Autowired
+	private CustomerService customerService;
+
 	@Override
-	public TicketDTO insertTicket(BookingDetails dto) throws TicketException, ActivityException, CustomerException {
+	public TicketDTO insertTicket(BookingDetails dto, String customerUuid)
+			throws TicketException, ActivityException, CustomerException {
 
-		Optional<Customer> optional = customerRepository.findById(dto.getCustomerId());
+		String username = customerService.getValidatedUsernameForCustomer(customerUuid);
 
-		if (optional.isPresent()) {
+		Customer existingCustomer = customerRepository.findByUsername(username).get();
 
-			Customer existingCustomer = optional.get();
+		Optional<Activity> option = activityRepository.findByName(dto.getActivityName());
 
-			Optional<Activity> option = activityRepository.findById(dto.getActivityId());
+		if (option.isPresent()) {
 
-			if (option.isPresent()) {
+			Activity existingActivity = option.get();
 
-				Activity existingActivity = option.get();
+			Optional<Slot> slot = slotRepository.findById(dto.getSlotId());
 
-				System.out.println(existingActivity);
+			if (slot.isPresent()) {
 
-				Optional<Slot> slot = slotRepository.findById(dto.getSlotId());
+				List<Slot> slots = existingActivity.getSlots();
 
-				if (slot.isPresent()) {
+				Slot existingSlot = slot.get();
 
-					List<Slot> slots = existingActivity.getSlots();
+				if (slots.contains(existingSlot)) {
 
-					Slot existingSlot = slot.get();
+					Ticket ticket = new Ticket();
 
-					if (slots.contains(existingSlot)) {
+					ticket.setDate(dto.getDate());
 
-						Ticket ticket = new Ticket();
+					ticket.setActivity(existingActivity);
 
-						ticket.setDate(dto.getDate());
+					ticket.setCustomer(existingCustomer);
 
-						ticket.setActivity(existingActivity);
+					ticket.setSlot(existingSlot);
 
-						ticket.setCustomer(existingCustomer);
+					existingActivity.getTickets().add(ticket);
 
-						ticket.setSlot(existingSlot);
+					existingCustomer.getTickets().add(ticket);
 
-						existingActivity.getTickets().add(ticket);
+					ticketRepository.save(ticket);
 
-						existingCustomer.getTickets().add(ticket);
+					customerRepository.save(existingCustomer);
 
-						ticketRepository.save(ticket);
+					activityRepository.save(existingActivity);
 
-						customerRepository.save(existingCustomer);
+					TicketDTO ticketDTO = new TicketDTO();
 
-						activityRepository.save(existingActivity);
+					ticketDTO.setActivityCharge(existingActivity.getCharges());
 
-						TicketDTO ticketDTO = new TicketDTO();
+					ticketDTO.setActivityName(existingActivity.getName());
 
-						ticketDTO.setActivityCharge(existingActivity.getCharges());
+					ticketDTO.setCustomerName(existingCustomer.getName());
 
-						ticketDTO.setActivityName(existingActivity.getName());
+					ticketDTO.setSlot(existingSlot);
 
-						ticketDTO.setCustomerName(existingCustomer.getName());
-
-						ticketDTO.setSlot(existingSlot);
-
-						return ticketDTO;
-
-					} else {
-
-						throw new ActivityException("Slot does not exists for this activity");
-
-					}
+					return ticketDTO;
 
 				} else {
 
-					throw new ActivityException("Slot does not exists..");
+					throw new ActivityException("Slot does not exists for this activity");
 
 				}
+
 			} else {
-				throw new ActivityException("Activity not found..");
+
+				throw new ActivityException("Slot does not exists..");
+
+			}
+		} else {
+			throw new ActivityException("Activity not found..");
+		}
+
+	}
+
+	@Override
+	public Ticket deleteTicket(Integer ticketId, String customerUuid) throws TicketException, CustomerException {
+
+		String username = customerService.getValidatedUsernameForCustomer(customerUuid);
+
+		Customer existingCustomer = customerRepository.findByUsername(username).get();
+
+		List<Ticket> tickets = existingCustomer.getTickets();
+
+		boolean flag = false;
+
+		for (Ticket t : tickets) {
+			if (t.getTicketId() == ticketId) {
+				flag = true;
+				break;
+			}
+		}
+
+		if (flag) {
+
+			Optional<Ticket> opt = ticketRepository.findById(ticketId);
+
+			if (opt.isEmpty()) {
+				throw new TicketException("No Ticket Found");
 			}
 
-		} else {
-			throw new CustomerException("Customer does not exists..");
+			Ticket existingTicket = opt.get();
+
+			ticketRepository.delete(existingTicket);
+
+			return existingTicket;
+
+		}
+		else {
+			
+			throw new TicketException("User not authorised");
+			
 		}
 
 	}
 
 	@Override
-	public Ticket deleteTicket(Integer ticketId) throws TicketException {
+	public List<Ticket> viewAllTicketsCustomer(String customerUuid) throws CustomerException, TicketException {
 
-		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+		String username = customerService.getValidatedUsernameForCustomer(customerUuid);
 
-		if (opt.isEmpty()) {
-			throw new TicketException("No Ticket Found");
-		}
+		Customer existingCustomer = customerRepository.findByUsername(username).get();
 
-		Ticket existingTicket = opt.get();
-
-		ticketRepository.delete(existingTicket);
-
-		return existingTicket;
-
-	}
-
-	@Override
-	public List<Ticket> viewAllTicketsCustomer(Integer customerId) throws CustomerException, TicketException {
-
-		Optional<Customer> opt = customerRepository.findById(customerId);
-
-		if (opt.isEmpty()) {
-			throw new CustomerException("No Customer Found");
-		}
-
-		List<Ticket> tickets = ticketRepository.findByCustomer(opt.get());
+		List<Ticket> tickets = ticketRepository.findByCustomer(existingCustomer);
 
 		if (tickets.isEmpty()) {
 			throw new TicketException("No Tickets Found");
@@ -155,79 +174,165 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 	}
 
 	@Override
-	public Double calculateBill(Integer customerId) throws CustomerException, TicketException {
+	public Double calculateBill(String customerUuid) throws CustomerException, TicketException {
 
-		Optional<Customer> customer = customerRepository.findById(customerId);
+		String username = customerService.getValidatedUsernameForCustomer(customerUuid);
 
-		if (customer.isPresent()) {
+		Customer existingCustomer = customerRepository.findByUsername(username).get();
 
-			Customer existingCustomer = customer.get();
+		List<Ticket> tickets = existingCustomer.getTickets();
 
-			List<Ticket> tickets = existingCustomer.getTickets();
+		if (tickets.isEmpty()) {
 
-			if (tickets.isEmpty()) {
+			throw new TicketException("No tickets found");
 
-				throw new TicketException("No tickets found");
+		} else {
 
-			} else {
+			Double bill = 0.0;
 
-				Double bill = 0.0;
+			for (Ticket t : tickets) {
 
-				for (Ticket t : tickets) {
-
-					bill += t.getActivity().getCharges();
-
-				}
-
-				return bill;
+				bill += t.getActivity().getCharges();
 
 			}
-		} else {
-			throw new CustomerException("Customer not found...");
+
+			return bill;
+
 		}
 
 	}
 
-	
 	@Override
-	public TicketDTO updateTicketsActivityName(TicketUpdateActivityNameDTO ticketUpdateDTO, Integer ticketId)
-			throws ActivityException, SlotException, TicketException {
+	public TicketDTO updateTicketsActivityName(TicketUpdateActivityNameDTO ticketUpdateDTO, Integer ticketId,
+			String customerUuid) throws ActivityException, SlotException, TicketException, CustomerException {
 
-		Optional<Ticket> opt = ticketRepository.findById(ticketId);
+		String username = customerService.getValidatedUsernameForCustomer(customerUuid);
 
-		if (opt.isEmpty()) {
-			throw new TicketException("No Tickets Found");
+		Customer existingCustomer = customerRepository.findByUsername(username).get();
+
+		List<Ticket> tickets = existingCustomer.getTickets();
+
+		boolean flag = false;
+
+		for (Ticket t : tickets) {
+			if (t.getTicketId() == ticketId) {
+				flag = true;
+				break;
+			}
 		}
 
-		Ticket existingTicket = opt.get();
-		
-		Optional<Activity> opt1 = activityRepository.findByName(ticketUpdateDTO.getActivityName());
-		
-		if(opt1.isEmpty()) {
-			throw new ActivityException("No Activity Found");
+		if (flag) {
+
+			Optional<Ticket> opt = ticketRepository.findById(ticketId);
+
+			if (opt.isEmpty()) {
+				throw new TicketException("No Tickets Found");
+			}
+
+			Ticket existingTicket = opt.get();
+
+			Optional<Activity> opt1 = activityRepository.findByName(ticketUpdateDTO.getActivityName());
+
+			if (opt1.isEmpty()) {
+				throw new ActivityException("No Activity Found");
+			}
+
+			Activity existingActivity = opt1.get();
+
+			Optional<Slot> opt2 = slotRepository.findById(ticketUpdateDTO.getSlotId());
+
+			if (opt2.isEmpty()) {
+				throw new SlotException("No Slot Found");
+			}
+
+			Slot existingSlot = opt2.get();
+
+			if (existingActivity.getSlots().contains(existingSlot)) {
+
+				existingTicket.setActivity(existingActivity);
+
+				existingTicket.setSlot(existingSlot);
+
+				if (ticketUpdateDTO.getDate() != null) {
+					existingTicket.setDate(ticketUpdateDTO.getDate());
+
+					ticketRepository.save(existingTicket);
+
+					TicketDTO ticketDTO = new TicketDTO();
+
+					ticketDTO.setActivityCharge(existingActivity.getCharges());
+
+					ticketDTO.setActivityName(existingActivity.getName());
+
+					ticketDTO.setCustomerName(existingTicket.getCustomer().getName());
+
+					ticketDTO.setSlot(existingSlot);
+
+					return ticketDTO;
+				} else {
+					throw new TicketException("Please Enter A Date");
+				}
+
+			} else {
+				throw new ActivityException("Slot Is Not Available For This Activity");
+			}
+
+		} else {
+
+			throw new TicketException("User not authorised");
+
 		}
-		
-		Activity existingActivity = opt1.get();
-		
-		Optional<Slot> opt2 = slotRepository.findById(ticketUpdateDTO.getSlotId());
-		
-		if(opt2.isEmpty()) {
-			throw new SlotException("No Slot Found");
+
+	}
+
+	@Override
+	public TicketDTO updateTicketsSlotOrDate(TicketUpdateSlotOrDateDTO ticketUpdateDTO, Integer ticketId,
+			String customerUuid) throws ActivityException, SlotException, TicketException, CustomerException {
+
+		String username = customerService.getValidatedUsernameForCustomer(customerUuid);
+
+		Customer existingCustomer = customerRepository.findByUsername(username).get();
+
+		List<Ticket> tickets = existingCustomer.getTickets();
+
+		boolean flag = false;
+
+		for (Ticket t : tickets) {
+			if (t.getTicketId() == ticketId) {
+				flag = true;
+				break;
+			}
 		}
-		
-		Slot existingSlot = opt2.get();
-		
-		if(existingActivity.getSlots().contains(existingSlot)) {
-			
-			existingTicket.setActivity(existingActivity);
-			
-			existingTicket.setSlot(existingSlot);
-			
-			if(ticketUpdateDTO.getDate() != null) {
-				existingTicket.setDate(ticketUpdateDTO.getDate());
-				
+
+		if (flag) {
+
+			Optional<Ticket> opt = ticketRepository.findById(ticketId);
+
+			if (opt.isEmpty()) {
+				throw new TicketException("No Tickets Found");
+			}
+
+			Ticket existingTicket = opt.get();
+
+			Optional<Slot> opt1 = slotRepository.findById(ticketUpdateDTO.getSlotId());
+
+			if (opt1.isEmpty()) {
+				throw new SlotException("No Slot Found");
+			}
+
+			Slot existingSlot = opt1.get();
+
+			Activity existingActivity = existingTicket.getActivity();
+
+			if (existingActivity.getSlots().contains(existingSlot)) {
+				existingTicket.setSlot(existingSlot);
+
+				if (ticketUpdateDTO.getDate() != null) {
+					existingTicket.setDate(ticketUpdateDTO.getDate());
+				}
+
 				ticketRepository.save(existingTicket);
-				
+
 				TicketDTO ticketDTO = new TicketDTO();
 
 				ticketDTO.setActivityCharge(existingActivity.getCharges());
@@ -239,67 +344,17 @@ public class TicketBookingServiceImpl implements TicketBookingService {
 				ticketDTO.setSlot(existingSlot);
 
 				return ticketDTO;
+
+			} else {
+				throw new ActivityException("Slot Is Not Available For This Activity");
 			}
-			else {
-				throw new TicketException("Please Enter A Date");
-			}
-			
-		}
-		else {
-			throw new ActivityException("Slot Is Not Available For This Activity");
+
+		} else {
+
+			throw new TicketException("User not authorised");
+
 		}
 
-	}
-
-	
-	@Override
-	public TicketDTO updateTicketsSlotOrDate(TicketUpdateSlotOrDateDTO ticketUpdateDTO, Integer ticketId)
-			throws ActivityException, SlotException, TicketException {
-		
-		Optional<Ticket> opt = ticketRepository.findById(ticketId);
-
-		if (opt.isEmpty()) {
-			throw new TicketException("No Tickets Found");
-		}
-
-		Ticket existingTicket = opt.get();
-		
-		Optional<Slot> opt1 = slotRepository.findById(ticketUpdateDTO.getSlotId());
-		
-		if(opt1.isEmpty()) {
-			throw new SlotException("No Slot Found");
-		}
-		
-		Slot existingSlot = opt1.get();
-		
-		Activity existingActivity = existingTicket.getActivity();
-		
-		if(existingActivity.getSlots().contains(existingSlot)) {
-			existingTicket.setSlot(existingSlot);
-			
-			if(ticketUpdateDTO.getDate() != null) {
-				existingTicket.setDate(ticketUpdateDTO.getDate());
-			}
-			
-			ticketRepository.save(existingTicket);
-			
-			TicketDTO ticketDTO = new TicketDTO();
-
-			ticketDTO.setActivityCharge(existingActivity.getCharges());
-
-			ticketDTO.setActivityName(existingActivity.getName());
-
-			ticketDTO.setCustomerName(existingTicket.getCustomer().getName());
-
-			ticketDTO.setSlot(existingSlot);
-
-			return ticketDTO;
-			
-		}
-		else {
-			throw new ActivityException("Slot Is Not Available For This Activity");
-		}
-		
 	}
 
 }
