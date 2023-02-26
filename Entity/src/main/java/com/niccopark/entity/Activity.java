@@ -3,11 +3,8 @@ package com.niccopark.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +17,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,15 +43,13 @@ public class Activity {
 	@NotNull(message = "charges can't be null")
 	private Float charges;
 
-	// Apply @JsonIgnore here to avoid StackOverflow error
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER) // Removed cascade = CascadeType.ALL, 
 	@JoinTable(joinColumns = @JoinColumn(name = "activityId"), inverseJoinColumns = @JoinColumn(name = "slotId"))
 	private List<Slot> slots = new ArrayList<>();
-//	private Set<Slot> slots = new HashSet<>(); // StackOverflow Error is coming
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "activity") // Removed cascade = CascadeType.ALL, 
+	@OneToMany(mappedBy = "activity") 
 	private List<Ticket> tickets = new ArrayList<>();
 
 	@Override

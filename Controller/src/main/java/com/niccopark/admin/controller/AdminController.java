@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,19 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.niccopark.admin.service.AdminService;
 import com.niccopark.authentication.service.LoginLogoutService;
 import com.niccopark.dtos.ActivityDetailsDTO;
-import com.niccopark.dtos.CustomerDetailsDTO;
 import com.niccopark.dtos.CustomerWiseDTO;
 import com.niccopark.dtos.DateWiseDTO;
+import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.SlotDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.UserUpdateDTO;
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Activity;
-import com.niccopark.entity.Admin;
-import com.niccopark.entity.Customer;
 import com.niccopark.entity.Slot;
-import com.niccopark.entity.Ticket;
+import com.niccopark.entity.User;
 
 import jakarta.validation.Valid;
 
@@ -49,47 +46,37 @@ public class AdminController {
 	private LoginLogoutService loginLogoutService;
 	
 	@PostMapping("/admin_sign_up")
-	public ResponseEntity<Admin> insertAdminHandler(@Valid @RequestBody Admin admin) {
+	public ResponseEntity<ShowUserDTO> insertAdminHandler(@Valid @RequestBody User user) {
 
-		Admin savedAdmin = adminService.insertAdmin(admin);
-
-		return new ResponseEntity<>(savedAdmin, HttpStatus.CREATED);
+		return new ResponseEntity<>(adminService.insertAdmin(user), HttpStatus.CREATED);
 
 	}
 
 	@PutMapping("/update_admin_details")
-	public ResponseEntity<Admin> updateAdminDetailsHandler(@Valid @RequestBody UserUpdateDTO dto, @RequestParam String adminUuid) {
+	public ResponseEntity<ShowUserDTO> updateAdminDetailsHandler(@Valid @RequestBody UserUpdateDTO dto, @RequestParam String adminUuid) {
 
-		Admin updatedAdmin = adminService.updateAdminDetails(dto, adminUuid);
-
-		return new ResponseEntity<>(updatedAdmin, HttpStatus.OK);
+		return new ResponseEntity<>(adminService.updateAdminDetails(dto, adminUuid), HttpStatus.OK);
 
 	}
 
 	@PutMapping("/update_admin_password")
-	public ResponseEntity<Admin> updateAdminPasswordHandler(@Valid @RequestBody UpdateUserPasswordDTO dto, @RequestParam String adminUuid) {
+	public ResponseEntity<ShowUserDTO> updateAdminPasswordHandler(@Valid @RequestBody UpdateUserPasswordDTO dto, @RequestParam String adminUuid) {
 
-		Admin updatedAdmin = adminService.updateAdminPassword(dto, adminUuid);
-
-		return new ResponseEntity<>(updatedAdmin, HttpStatus.OK);
+		return new ResponseEntity<>(adminService.updateAdminPassword(dto, adminUuid), HttpStatus.OK);
 
 	}
 
 	@PutMapping("/update_admin_username")
-	public ResponseEntity<Admin> updateAdminUsernameHandler(@Valid @RequestBody UpdateUserUsernameDTO dto, @RequestParam String adminUuid) {
+	public ResponseEntity<ShowUserDTO> updateAdminUsernameHandler(@Valid @RequestBody UpdateUserUsernameDTO dto, @RequestParam String adminUuid) {
 
-		Admin updatedAdmin = adminService.updateAdminUsername(dto, adminUuid);
-
-		return new ResponseEntity<>(updatedAdmin, HttpStatus.OK);
+		return new ResponseEntity<>(adminService.updateAdminUsername(dto, adminUuid), HttpStatus.OK);
 
 	}
 
 	@DeleteMapping("/delete_admin/{adminId}")
-	public ResponseEntity<Admin> deleteAdminHandler(@PathVariable("adminId") Integer adminId, @RequestParam String adminUuid) {
+	public ResponseEntity<ShowUserDTO> deleteAdminHandler(@PathVariable("adminId") Integer adminId, @RequestParam String adminUuid) {
 
-		Admin deletedAdmin = adminService.deleteAdmin(adminId, adminUuid);
-
-		return new ResponseEntity<>(deletedAdmin, HttpStatus.OK);
+		return new ResponseEntity<>(adminService.deleteAdmin(adminId, adminUuid), HttpStatus.OK);
 
 	}
 
@@ -108,12 +95,10 @@ public class AdminController {
 	}
 
 	@GetMapping("/get_all_activities/{customerId}")
-	public ResponseEntity<List<Activity>> getAllActivitiesByCustomerIdHandler(
+	public ResponseEntity<List<ActivityDetailsDTO>> getAllActivitiesByCustomerIdHandler(
 			@PathVariable("customerId") Integer customerID, @RequestParam String adminUuid) {
 
-		List<Activity> activities = adminService.getAllActivitiesByCustomerId(customerID, adminUuid);
-
-		return new ResponseEntity<>(activities, HttpStatus.OK);
+		return new ResponseEntity<>(adminService.getAllActivitiesByCustomerId(customerID, adminUuid), HttpStatus.OK);
 
 	}
 
@@ -145,7 +130,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/get_all_activities_for_days/{customerId}")
-	public ResponseEntity<List<Ticket>> getAllActivitiesForDaysHandler(@PathVariable("customerId") Integer customerId,
+	public ResponseEntity<List<ActivityDetailsDTO>> getAllActivitiesForDaysHandler(@PathVariable("customerId") Integer customerId,
 			@RequestParam String fromDate, @RequestParam String toDate, @RequestParam String adminUuid) {
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
@@ -153,9 +138,7 @@ public class AdminController {
 		LocalDate d1 = LocalDate.parse(fromDate, formatter);
 		LocalDate d2 = LocalDate.parse(toDate, formatter);
 		
-		List<Ticket> tickets = adminService.getAllActivitiesForDays(customerId, d1, d2, adminUuid);
-		
-		return new ResponseEntity<>(tickets, HttpStatus.OK);
+		return new ResponseEntity<>(adminService.getAllActivitiesForDays(customerId, d1, d2, adminUuid), HttpStatus.OK);
 
 	}
 	

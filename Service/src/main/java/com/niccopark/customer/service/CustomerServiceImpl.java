@@ -1,5 +1,6 @@
 package com.niccopark.customer.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.niccopark.admin.service.AdminService;
 import com.niccopark.authentication.service.LoginLogoutService;
 import com.niccopark.dtos.FlagDTO;
+import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.UserUpdateDTO;
@@ -17,6 +19,7 @@ import com.niccopark.entity.Admin;
 import com.niccopark.entity.CurrentUserSession;
 import com.niccopark.entity.Customer;
 import com.niccopark.entity.Role;
+import com.niccopark.entity.User;
 import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.CustomerException;
 import com.niccopark.repository.AdminRepository;
@@ -42,50 +45,60 @@ public class CustomerServiceImpl implements CustomerService {
 	private AdminService adminService;
 
 	@Override
-	public Customer insertCustomer(Customer customer) throws CustomerException {
+	public ShowUserDTO insertCustomer(User user) throws CustomerException {
 
-		Optional<Customer> opt = customerRepository.findByUsername(customer.getUsername());
+		Optional<Customer> opt = customerRepository.findByUsername(user.getUsername());
 
 		if (opt.isPresent()) {
 			throw new CustomerException("Username Already Exists...");
 		}
 
-		Optional<Admin> opt1 = adminRepository.findByUsername(customer.getUsername());
+		Optional<Admin> opt1 = adminRepository.findByUsername(user.getUsername());
 
 		if (opt1.isPresent()) {
 			throw new CustomerException("Username Already Exists...");
 		}
 
-		return customerRepository.save(customer);
+		Customer customer = new Customer();
+	    customer.setAddress(user.getAddress());
+	    customer.setEmail(user.getEmail());
+	    customer.setMobileNumber(user.getMobileNumber());
+	    customer.setName(user.getName());
+	    customer.setUsername(user.getUsername());
+	    customer.setPassword(user.getPassword());
+
+		return new ShowUserDTO(customer.getName(), customer.getUsername(), customer.getAddress(), customer.getMobileNumber(), customer.getEmail());
 
 	}
 
 	@Override
-	public Customer updateCustomerDetails(UserUpdateDTO dto, String uuid) throws CustomerException {
+	public ShowUserDTO updateCustomerDetails(UserUpdateDTO dto, String uuid) throws CustomerException {
 		
 		String username = getValidatedUsernameForCustomer(uuid);
 		
-		Customer savecustomer = customerRepository.findByUsername(username).get();
+		Customer savedCustomer = customerRepository.findByUsername(username).get();
 
 		if (dto.getAddress() != null) {
-			savecustomer.setAddress(dto.getAddress());
+			savedCustomer.setAddress(dto.getAddress());
 		}
 		if (dto.getMobileNumber() != null) {
-			savecustomer.setMobileNumber(dto.getMobileNumber());
+			savedCustomer.setMobileNumber(dto.getMobileNumber());
 		}
 		if (dto.getEmail() != null) {
-			savecustomer.setEmail(dto.getEmail());
+			savedCustomer.setEmail(dto.getEmail());
 		}
 		if (dto.getName() != null) {
-			savecustomer.setName(dto.getName());
+			savedCustomer.setName(dto.getName());
 		}
 
-		return customerRepository.save(savecustomer);
+		customerRepository.save(savedCustomer);
+		
+		return new ShowUserDTO(savedCustomer.getName(), savedCustomer.getUsername(), savedCustomer.getAddress(), savedCustomer.getMobileNumber(), savedCustomer.getEmail());
 
 	}
 
 	@Override
-	public Customer updateCustomerPassword(UpdateUserPasswordDTO dto, String uuid) throws CustomerException {
+	public ShowUserDTO updateCustomerPassword(UpdateUserPasswordDTO dto, String uuid) throws CustomerException {
 
 		String username = getValidatedUsernameForCustomer(uuid);
 		
@@ -95,12 +108,14 @@ public class CustomerServiceImpl implements CustomerService {
 			savedCustomer.setPassword(dto.getNewPassword());
 		}
 
-		return customerRepository.save(savedCustomer);
+		customerRepository.save(savedCustomer);
+		
+		return new ShowUserDTO(savedCustomer.getName(), savedCustomer.getUsername(), savedCustomer.getAddress(), savedCustomer.getMobileNumber(), savedCustomer.getEmail());
 
 	}
 
 	@Override
-	public Customer updateCustomerUsername(UpdateUserUsernameDTO dto, String uuid) throws CustomerException {
+	public ShowUserDTO updateCustomerUsername(UpdateUserUsernameDTO dto, String uuid) throws CustomerException {
 
 		String username = getValidatedUsernameForCustomer(uuid);
 		
@@ -114,7 +129,9 @@ public class CustomerServiceImpl implements CustomerService {
 				session.setUsername(dto.getNewUsername());
 				
 				currentUserSessionRepository.save(session);
-				return customerRepository.save(savedCustomer);
+				customerRepository.save(savedCustomer);
+				
+				return new ShowUserDTO(savedCustomer.getName(), savedCustomer.getUsername(), savedCustomer.getAddress(), savedCustomer.getMobileNumber(), savedCustomer.getEmail());
 			} else {
 				throw new CustomerException("Username Already Exists...");
 			}
@@ -125,9 +142,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer deleteCustomer(Integer customerId, String uuid) throws AdminException, CustomerException {
+	public ShowUserDTO deleteCustomer(Integer customerId, String uuid) throws AdminException, CustomerException {
 
-		String username = adminService.getValidatedUsernameForAdmin(uuid);
+		adminService.getValidatedUsernameForAdmin(uuid);
 
 		Optional<Customer> opt = customerRepository.findById(customerId);
 		
@@ -136,30 +153,42 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 
 		Customer savedCustomer = opt.get();
+		
+		Optional<CurrentUserSession> opt1 = currentUserSessionRepository.findByUsername(savedCustomer.getUsername());
+		
+		if(opt1.isPresent()) {
+			currentUserSessionRepository.delete(opt1.get());
+		}
 
 		customerRepository.delete(savedCustomer);
 
-		return savedCustomer;
+		return new ShowUserDTO(savedCustomer.getName(), savedCustomer.getUsername(), savedCustomer.getAddress(), savedCustomer.getMobileNumber(), savedCustomer.getEmail());
 
 	}
 
 	@Override
-	public List<Customer> viewCustomers(String uuid) throws CustomerException {
+	public List<ShowUserDTO> viewAllCustomers(String uuid) throws CustomerException {
 
-		String username = adminService.getValidatedUsernameForAdmin(uuid);
+		adminService.getValidatedUsernameForAdmin(uuid);
 
 		List<Customer> customers = customerRepository.findAll();
 
 		if (customers.isEmpty()) {
 			throw new CustomerException("No Customers Found...");
 		}
-
-		return customers;
+		
+		List<ShowUserDTO> dtos = new ArrayList<>();
+		
+		customers.forEach(savedCustomer -> {
+			dtos.add(new ShowUserDTO(savedCustomer.getName(), savedCustomer.getUsername(), savedCustomer.getAddress(), savedCustomer.getMobileNumber(), savedCustomer.getEmail()));
+		});
+		
+		return dtos;
 
 	}
 
 	@Override
-	public Customer viewCustomer(Integer customerId, String uuid) throws CustomerException {
+	public ShowUserDTO viewCustomer(Integer customerId, String uuid) throws CustomerException {
 
 		String username = adminService.getValidatedUsernameForAdmin(uuid);
 
@@ -168,11 +197,14 @@ public class CustomerServiceImpl implements CustomerService {
 		if (opt.isEmpty()) {
 			throw new CustomerException("Customer Not Found With Customer ID : " + customerId);
 		}
+		
+		Customer savedCustomer = opt.get();
 
-		return opt.get();
+		return new ShowUserDTO(savedCustomer.getName(), savedCustomer.getUsername(), savedCustomer.getAddress(), savedCustomer.getMobileNumber(), savedCustomer.getEmail());
 
 	}
 
+	
 	@Override
 	public Customer validateCustomer(ValidateUserDTO dto) throws CustomerException {
 
