@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.niccopark.authentication.service.LoginLogoutService;
 import com.niccopark.customer.service.CustomerService;
+import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.UserUpdateDTO;
 import com.niccopark.dtos.ValidateUserDTO;
-import com.niccopark.entity.Customer;
+import com.niccopark.entity.User;
 
 import jakarta.validation.Valid;
 
@@ -36,49 +37,49 @@ public class CustomerController {
 	private LoginLogoutService loginLogoutService;
 
 	@PostMapping("/customer_sign_up")
-	public ResponseEntity<Customer> insertCustomerHandler(@Valid @RequestBody Customer customer) {
+	public ResponseEntity<ShowUserDTO> insertCustomerHandler(@Valid @RequestBody User user) {
 		
-		return new ResponseEntity<>(customerService.insertCustomer(customer), HttpStatus.CREATED);
+		return new ResponseEntity<>(customerService.insertCustomer(user), HttpStatus.CREATED);
 		
 	}
 
 	@PutMapping("/update_customer_details")
-	public ResponseEntity<Customer> updateCustomerDetailsHandler(@Valid @RequestBody UserUpdateDTO dto, @RequestParam String customerUuid) {
+	public ResponseEntity<ShowUserDTO> updateCustomerDetailsHandler(@Valid @RequestBody UserUpdateDTO dto, @RequestParam String customerUuid) {
 
 		return new ResponseEntity<>(customerService.updateCustomerDetails(dto, customerUuid), HttpStatus.OK);
 		
 	}
 
 	@PutMapping("/update_customer_password")
-	public ResponseEntity<Customer> updateCustomerPasswordHandler(@Valid @RequestBody UpdateUserPasswordDTO updateUserPasswordDTO, @RequestParam String customerUuid) {
+	public ResponseEntity<ShowUserDTO> updateCustomerPasswordHandler(@Valid @RequestBody UpdateUserPasswordDTO updateUserPasswordDTO, @RequestParam String customerUuid) {
 		
 		return new ResponseEntity<>(customerService.updateCustomerPassword(updateUserPasswordDTO, customerUuid), HttpStatus.OK);
 		
 	}
 
 	@PutMapping("/update_customer_username")
-	public ResponseEntity<Customer> updateCustomerUsernamehandler(@Valid @RequestBody UpdateUserUsernameDTO updateUserUsernameDTO, @RequestParam String customerUuid) {
+	public ResponseEntity<ShowUserDTO> updateCustomerUsernamehandler(@Valid @RequestBody UpdateUserUsernameDTO updateUserUsernameDTO, @RequestParam String customerUuid) {
 		
 		return new ResponseEntity<>(customerService.updateCustomerUsername(updateUserUsernameDTO, customerUuid), HttpStatus.OK);
 		
 	}
 
 	@DeleteMapping("/delete_customer/{customerId}")
-	public ResponseEntity<Customer> deleteCustomerHandler(@PathVariable("customerId") Integer customerId, @RequestParam String adminUuid) {
+	public ResponseEntity<ShowUserDTO> deleteCustomerHandler(@PathVariable("customerId") Integer customerId, @RequestParam String adminUuid) {
 		
 		return new ResponseEntity<>(customerService.deleteCustomer(customerId, adminUuid), HttpStatus.OK);
 		
 	}
 
-	@GetMapping("/get_customers")
-	public ResponseEntity<List<Customer>> viewCustomersHandler(@RequestParam String adminUuid) {
+	@GetMapping("/get_all_customers")
+	public ResponseEntity<List<ShowUserDTO>> viewCustomersHandler(@RequestParam String adminUuid) {
 		
-		return new ResponseEntity<>(customerService.viewCustomers(adminUuid), HttpStatus.OK);
+		return new ResponseEntity<>(customerService.viewAllCustomers(adminUuid), HttpStatus.OK);
 		
 	}
 
 	@GetMapping("/get_customer_byId/{customerId}")
-	public ResponseEntity<Customer> viewCustomerHandler(@PathVariable("customerId") Integer customerId, @RequestParam String adminUuid) {
+	public ResponseEntity<ShowUserDTO> viewCustomerHandler(@PathVariable("customerId") Integer customerId, @RequestParam String adminUuid) {
 		
 		return new ResponseEntity<>(customerService.viewCustomer(customerId, adminUuid), HttpStatus.OK);
 		

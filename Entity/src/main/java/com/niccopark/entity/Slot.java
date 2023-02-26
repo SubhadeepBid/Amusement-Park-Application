@@ -33,7 +33,6 @@ public class Slot {
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "slots")
 	private List<Activity> activities = new ArrayList<>();
-//	private Set<Activity> activities = new HashSet<>(); // StackOverflow Error is coming
 
 	@Override
 	public String toString() {

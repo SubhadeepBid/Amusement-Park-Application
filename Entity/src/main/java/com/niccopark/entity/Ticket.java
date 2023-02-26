@@ -3,8 +3,6 @@ package com.niccopark.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,13 +27,11 @@ public class Ticket {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer ticketId;
 	
-	// Apply @JsonIgnore here to avoid StackOverflow error
 //	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JoinColumn(name = "customerId")
 	private Customer customer;
 	
-	// Apply @JsonIgnore here to avoid StackOverflow error
 //	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER) // Added , fetch = FetchType.EAGER
 	@JoinColumn(name = "activityId")
@@ -51,9 +46,4 @@ public class Ticket {
 	
 	private LocalDateTime bookingTime = LocalDateTime.now();
 
-//	@Override
-//	public String toString() {
-//		return "Ticket [ticketId=" + ticketId + ", bookingTime=" + bookingTime + "]";
-//	}
-	
 }
