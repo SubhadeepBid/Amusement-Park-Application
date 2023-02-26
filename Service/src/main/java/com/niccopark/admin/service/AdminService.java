@@ -6,6 +6,7 @@ import java.util.List;
 import com.niccopark.dtos.ActivityDetailsDTO;
 import com.niccopark.dtos.CustomerWiseDTO;
 import com.niccopark.dtos.DateWiseDTO;
+import com.niccopark.dtos.SampleUserDTO;
 import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
@@ -23,7 +24,7 @@ import com.niccopark.exceptions.UserException;
 
 public interface AdminService {
 
-	public ShowUserDTO insertAdmin(User user) throws AdminException;
+	public ShowUserDTO insertAdmin(SampleUserDTO user) throws AdminException;
 	
 	public Admin validateAdmin(ValidateUserDTO dto) throws AdminException;
 

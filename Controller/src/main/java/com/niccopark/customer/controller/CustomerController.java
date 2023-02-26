@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.niccopark.authentication.service.LoginLogoutService;
 import com.niccopark.customer.service.CustomerService;
+import com.niccopark.dtos.SampleUserDTO;
 import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.UserUpdateDTO;
 import com.niccopark.dtos.ValidateUserDTO;
-import com.niccopark.entity.User;
 
 import jakarta.validation.Valid;
 
@@ -37,7 +37,7 @@ public class CustomerController {
 	private LoginLogoutService loginLogoutService;
 
 	@PostMapping("/customer_sign_up")
-	public ResponseEntity<ShowUserDTO> insertCustomerHandler(@Valid @RequestBody User user) {
+	public ResponseEntity<ShowUserDTO> insertCustomerHandler(@Valid @RequestBody SampleUserDTO user) {
 		
 		return new ResponseEntity<>(customerService.insertCustomer(user), HttpStatus.CREATED);
 		
