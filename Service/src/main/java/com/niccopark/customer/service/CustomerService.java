@@ -2,19 +2,19 @@ package com.niccopark.customer.service;
 
 import java.util.List;
 
+import com.niccopark.dtos.SampleUserDTO;
 import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
 import com.niccopark.dtos.UserUpdateDTO;
 import com.niccopark.dtos.ValidateUserDTO;
 import com.niccopark.entity.Customer;
-import com.niccopark.entity.User;
 import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.CustomerException;
 
 public interface CustomerService {
 	
-	public ShowUserDTO insertCustomer(User user) throws CustomerException;
+	public ShowUserDTO insertCustomer(SampleUserDTO user) throws CustomerException;
 
 	public ShowUserDTO updateCustomerDetails(UserUpdateDTO dto, String uuid) throws CustomerException;
 

@@ -17,6 +17,7 @@ import com.niccopark.dtos.CustomerDetailsDTO;
 import com.niccopark.dtos.CustomerWiseDTO;
 import com.niccopark.dtos.DateWiseDTO;
 import com.niccopark.dtos.FlagDTO;
+import com.niccopark.dtos.SampleUserDTO;
 import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
@@ -29,7 +30,6 @@ import com.niccopark.entity.Customer;
 import com.niccopark.entity.Role;
 import com.niccopark.entity.Slot;
 import com.niccopark.entity.Ticket;
-import com.niccopark.entity.User;
 import com.niccopark.exceptions.ActivityException;
 import com.niccopark.exceptions.AdminException;
 import com.niccopark.exceptions.CustomerException;
@@ -68,7 +68,7 @@ public class AdminServiceImpl implements AdminService {
 	private LoginLogoutService loginLogoutService;
 
 	@Override
-	public ShowUserDTO insertAdmin(User user) throws AdminException {
+	public ShowUserDTO insertAdmin(SampleUserDTO user) throws AdminException {
 
 		Optional<Admin> opt = adminRepository.findByUsername(user.getUsername());
 

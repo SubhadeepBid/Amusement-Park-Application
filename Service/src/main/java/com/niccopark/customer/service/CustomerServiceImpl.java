@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.niccopark.admin.service.AdminService;
 import com.niccopark.authentication.service.LoginLogoutService;
 import com.niccopark.dtos.FlagDTO;
+import com.niccopark.dtos.SampleUserDTO;
 import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
 import com.niccopark.dtos.UpdateUserUsernameDTO;
@@ -45,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private AdminService adminService;
 
 	@Override
-	public ShowUserDTO insertCustomer(User user) throws CustomerException {
+	public ShowUserDTO insertCustomer(SampleUserDTO user) throws CustomerException {
 
 		Optional<Customer> opt = customerRepository.findByUsername(user.getUsername());
 
@@ -66,6 +67,8 @@ public class CustomerServiceImpl implements CustomerService {
 	    customer.setName(user.getName());
 	    customer.setUsername(user.getUsername());
 	    customer.setPassword(user.getPassword());
+	    
+	    customerRepository.save(customer);
 
 		return new ShowUserDTO(customer.getName(), customer.getUsername(), customer.getAddress(), customer.getMobileNumber(), customer.getEmail());
 

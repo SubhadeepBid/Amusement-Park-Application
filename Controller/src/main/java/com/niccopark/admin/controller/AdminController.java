@@ -23,6 +23,7 @@ import com.niccopark.authentication.service.LoginLogoutService;
 import com.niccopark.dtos.ActivityDetailsDTO;
 import com.niccopark.dtos.CustomerWiseDTO;
 import com.niccopark.dtos.DateWiseDTO;
+import com.niccopark.dtos.SampleUserDTO;
 import com.niccopark.dtos.ShowUserDTO;
 import com.niccopark.dtos.SlotDTO;
 import com.niccopark.dtos.UpdateUserPasswordDTO;
@@ -46,7 +47,7 @@ public class AdminController {
 	private LoginLogoutService loginLogoutService;
 	
 	@PostMapping("/admin_sign_up")
-	public ResponseEntity<ShowUserDTO> insertAdminHandler(@Valid @RequestBody User user) {
+	public ResponseEntity<ShowUserDTO> insertAdminHandler(@Valid @RequestBody SampleUserDTO user) {
 
 		return new ResponseEntity<>(adminService.insertAdmin(user), HttpStatus.CREATED);
 
