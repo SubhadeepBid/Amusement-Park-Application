@@ -1,5 +1,6 @@
 # Nicco Park
-![ProjectLogo](https://user-images.githubusercontent.com/107462648/221474006-506a45e6-c1e6-4b24-b31a-aeab61433c57.jpeg)
+
+<p align="center"> <img src="https://user-images.githubusercontent.com/107462648/221474006-506a45e6-c1e6-4b24-b31a-aeab61433c57.jpeg"></p>
 
 # Introduction
 
