@@ -19,7 +19,9 @@
         - Update Profile
         - Add Different Slots
         - Add Different Activity
-        - Delete Activity
+        - Connect slots with activity
+        - Remove Activity
+        - Remove Customer
         
      Functionalities Of Customer :
     
@@ -28,7 +30,7 @@
         - Update Profile
         - Book Ticket
         - Update Ticket Details
-        - Delete Ticket
+        - Remove Ticket
         
       
       
