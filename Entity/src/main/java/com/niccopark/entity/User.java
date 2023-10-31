@@ -23,7 +23,7 @@ public abstract class User {
 	private String name;
 	
 	@NotNull(message = "Name can't be null")
-	@Pattern(regexp = "^[a-zA-Z0-9_]{6,12}$", message = "username length should be bgreater than 5 and less than 13 and contains only alphanumeric value with _")
+	@Pattern(regexp = "^[a-zA-Z0-9_]{6,12}$", message = "Username length should be greater than 5 and less than 13 and contains only alphanumeric value with _")
 	@Column(unique = true)
 	private String username;
 	
